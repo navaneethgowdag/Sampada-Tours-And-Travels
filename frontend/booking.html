@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Book Package | Sampada Tours & Travels</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo">
+    <a href="index.html">Sampada Tours & Travels</a>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="tours.html" class="active">Tours</a>
+    <a href="car-rentals.html">Car Rentals</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="auth-links" id="authLinks">
+    <a href="login.html" class="btn-secondary" id="loginBtn">Login</a>
+    <a href="register.html" class="btn-primary" id="signupBtn">Sign Up</a>
+  </div>
+</header>
+
+<main class="container section">
+  <h1>Book Your Tour Package</h1>
+
+  <form id="bookingForm" class="booking-form">
+
+    <fieldset>
+      <legend>Choose Your Package</legend>
+      
+      <div class="form-group">
+        <label for="tourSelect">Tour Package</label>
+        <select id="tourSelect" required>
+          <option value="">Select Tour Package</option>
+          <option value="Hampi" data-price="3500">Hampi Tour - ₹3,500</option>
+          <option value="Bidar" data-price="2500">Bidar Tour - ₹2,500</option>
+          <option value="Vijayapura" data-price="4500">Vijayapura Tour - ₹4,500</option>
+          <option value="Custom">Custom Package (Design your own)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="pricePerPerson">Price per Person (₹)</label>
+        <input type="number" id="pricePerPerson" value="0" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="peopleCount">Number of People</label>
+        <input type="number" id="peopleCount" min="1" value="1" placeholder="Minimum 1 person" required>
+      </div>
+    </fieldset>
+
+    <fieldset id="customFields" style="display:none;">
+      <legend>Custom Tour Details</legend>
+      <p class="form-instruction">Please provide details for your custom itinerary. We will contact you to finalize the quote.</p>
+
+      <div class="form-group">
+        <label for="fromPlace">From Location</label>
+        <input type="text" id="fromPlace" placeholder="e.g., Kalaburagi" data-custom-required>
+      </div>
+
+      <div class="form-group">
+        <label for="toPlace">To Location</label>
+        <input type="text" id="toPlace" placeholder="e.g., Goa" data-custom-required>
+      </div>
+
+      <div class="form-group">
+        <label for="days">Number of Days</label>
+        <input type="number" id="days" min="1" placeholder="e.g., 3" data-custom-required>
+      </div>
+
+      <div class="form-group">
+        <label for="kms">Approx Distance (KM)</label>
+        <input type="number" id="kms" min="1" placeholder="e.g., 500" data-custom-required>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Estimated Cost</legend>
+      <div class="form-group total-amount-group">
+        <label for="totalAmount">Total Estimated Amount (₹)</label>
+        <input type="number" id="totalAmount" value="0" readonly>
+      </div>
+      <p class="form-instruction calculation-note">
+        *Note: This is an estimate. Final prices may vary based on travel dates and availability, especially for Custom Packages.
+      </p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Your Contact Information</legend>
+      
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" placeholder="Your full name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" placeholder="9876543210" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label for="travelDate">Travel Date</label>
+        <input type="date" id="travelDate" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="requirements">Additional Requirements</label>
+        <textarea id="requirements" rows="3" placeholder="e.g., vegetarian meals, specific hotel requests..."></textarea>
+      </div>
+    </fieldset>
+
+    <button type="submit" class="btn-submit">
+      <i class="fas fa-paper-plane"></i> Submit Booking Request
+    </button>
+
+  </form>
+</main>
+
+<footer class="main-footer">
+  <div class="footer-content">
+    <p>Sampada Tours & Travels</p>
+    <p class="address"><i class="fas fa-map-marker-alt"></i> Kirana Bazar Road, Mominpura, Kalaburagi, Karnataka</p>
+    <p class="copyright">© 2025 Sampada Tours & Travels</p>
+  </div>
+</footer>
+
+<script src="js/auth.js"></script>
+<script>
+/* ===========================
+   PACKAGE PRICE CALCULATION
+=========================== */
+
+const tourSelect = document.getElementById("tourSelect");
+const priceInput = document.getElementById("pricePerPerson");
+const peopleInput = document.getElementById("peopleCount");
+const totalInput = document.getElementById("totalAmount");
+
+const customFields = document.getElementById("customFields");
+const daysInput = document.getElementById("days");
+const kmsInput = document.getElementById("kms");
+const customInputs = customFields.querySelectorAll('[data-custom-required]');
+
+const RATE_PER_KM = 12;
+
+// Set minimum travel date
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('travelDate').setAttribute('min', today);
+
+// Auto-fill from URL
+const params = new URLSearchParams(window.location.search);
+const pkg = params.get("package");
+if (pkg) {
+  tourSelect.value = pkg;
+  const opt = tourSelect.options[tourSelect.selectedIndex];
+  priceInput.value = opt.dataset.price || 0;
+  calculatePredefined();
+}
+
+function toggleCustomRequired(isRequired) {
+  customInputs.forEach(input => {
+    if (isRequired) input.setAttribute('required', 'required');
+    else input.removeAttribute('required');
+  });
+
+  if (!isRequired) {
+    customFields.querySelectorAll('input').forEach(input => input.value = '');
+  }
+}
+
+tourSelect.addEventListener("change", () => {
+  const isCustom = tourSelect.value === "Custom";
+  const option = tourSelect.options[tourSelect.selectedIndex];
+
+  if (isCustom) {
+    priceInput.value = 0;
+    customFields.style.display = "block";
+    totalInput.value = 0;
+    toggleCustomRequired(true);
+  } else {
+    customFields.style.display = "none";
+    priceInput.value = option.dataset.price || 0;
+    toggleCustomRequired(false);
+    calculatePredefined();
+  }
+});
+
+peopleInput.addEventListener("input", () => {
+  tourSelect.value === "Custom" ? calculateCustom() : calculatePredefined();
+});
+
+daysInput?.addEventListener("input", calculateCustom);
+kmsInput?.addEventListener("input", calculateCustom);
+
+function calculatePredefined() {
+  const price = Number(priceInput.value);
+  const people = Number(peopleInput.value);
+  totalInput.value = price > 0 && people > 0 ? price * people : 0;
+}
+
+function calculateCustom() {
+  const km = Number(kmsInput.value) || 0;
+  const days = Number(daysInput.value) || 0;
+  const people = Number(peopleInput.value) || 1;
+
+  if (km > 0 && days > 0) {
+    totalInput.value = (km * RATE_PER_KM * days * people).toFixed(0);
+  } else {
+    totalInput.value = 0;
+  }
+}
+
+/* ===========================
+   AUTH UI HANDLING
+=========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+  const username = localStorage.getItem("username");
+
+  const loginBtn = document.getElementById("loginBtn");
+  const signupBtn = document.getElementById("signupBtn");
+  const authLinks = document.getElementById("authLinks");
+
+  if (token) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (signupBtn) signupBtn.style.display = "none";
+
+    if (authLinks) {
+      authLinks.innerHTML = `
+        <span style="font-weight:600; margin-right:10px;">
+          👋 Hi, ${username || "User"}
+        </span>
+        <button id="logoutBtn" class="btn-secondary">Logout</button>
+      `;
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        alert("You have been logged out.");
+        window.location.href = "index.html";
+      });
+    }
+  }
+});
+</script>
+
+</body>
+</html>

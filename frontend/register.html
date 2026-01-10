@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sign Up | Sampada Tours & Travels</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo">
+    <a href="index.html">Sampada Tours & Travels</a>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="tours.html">Tours</a>
+    <a href="car-rentals.html">Car Rentals</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="auth-links">
+    <a href="login.html" class="btn-secondary">Login</a>
+    <a href="register.html" class="btn-primary active-auth">Sign Up</a>
+  </div>
+</header>
+
+<main class="auth-container">
+
+  <div class="auth-box">
+
+    <h2><i class="fas fa-user-plus"></i> Create Your Account</h2>
+    <p class="auth-message">Join Sampada Tours & Travels for exclusive benefits!</p>
+
+    <!-- Alert Box -->
+    <div id="alertBox" class="alert-box" role="alert" style="display: none;"></div>
+
+    <form id="registerForm" class="auth-form" novalidate>
+
+      <div class="form-group icon-input">
+        <label for="fullName">Full Name</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user icon" aria-hidden="true"></i>
+          <input 
+            type="text" 
+            id="fullName" 
+            name="fullName"
+            placeholder="Your full name" 
+            required
+            autocomplete="name"
+            aria-describedby="fullNameError">
+        </div>
+        <span id="fullNameError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group icon-input">
+        <label for="phone">Phone Number</label>
+        <div class="input-wrapper">
+          <i class="fas fa-phone icon" aria-hidden="true"></i>
+          <input 
+            type="tel" 
+            id="phone" 
+            name="phone"
+            placeholder="9876543210" 
+            required
+            autocomplete="tel"
+            pattern="[0-9]{10}"
+            aria-describedby="phoneError">
+        </div>
+        <span id="phoneError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group icon-input">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope icon" aria-hidden="true"></i>
+          <input 
+            type="email" 
+            id="email" 
+            name="email"
+            placeholder="your@email.com" 
+            required
+            autocomplete="email"
+            aria-describedby="emailError">
+        </div>
+        <span id="emailError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group icon-input">
+        <label for="password">Password</label>
+        <div class="input-wrapper password-wrapper">
+          <i class="fas fa-key icon" aria-hidden="true"></i>
+          <input 
+            type="password" 
+            id="password" 
+            name="password"
+            placeholder="Create a strong password"
+            required
+            autocomplete="new-password"
+            aria-describedby="passwordError passwordText">
+          <span 
+            class="password-toggle" 
+            id="togglePassword"
+            role="button"
+            tabindex="0"
+            aria-label="Toggle password visibility">
+            <i class="fas fa-eye"></i>
+          </span>
+        </div>
+        <span id="passwordError" class="error-message" style="display: none;"></span>
+
+        <!-- Strength Meter -->
+        <div class="password-meter" id="passwordMeter">
+          <span></span>
+        </div>
+        <div class="password-text" id="passwordText">Enter a strong password (min. 8 characters)</div>
+      </div>
+
+      <div class="form-group icon-input">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="input-wrapper password-wrapper">
+          <i class="fas fa-lock icon" aria-hidden="true"></i>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            name="confirmPassword"
+            placeholder="Re-enter password" 
+            required
+            autocomplete="new-password"
+            aria-describedby="confirmPasswordError">
+          <span 
+            class="password-toggle" 
+            id="toggleConfirmPassword"
+            role="button"
+            tabindex="0"
+            aria-label="Toggle confirm password visibility">
+            <i class="fas fa-eye"></i>
+          </span>
+        </div>
+        <span id="confirmPasswordError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <button type="submit" class="btn-submit auth-submit-btn" id="submitBtn">
+        <i class="fas fa-user-check"></i> Sign Up
+      </button>
+
+      <p class="alt-action">
+        Already have an account?
+        <a href="login.html" class="auth-link">Log In Here</a>
+      </p>
+
+    </form>
+  </div>
+</main>
+
+<footer class="main-footer">
+  <div class="footer-content">
+    <p>Sampada Tours & Travels</p>
+    <p class="address"><i class="fas fa-map-marker-alt"></i> Kirana Bazar Road, Mominpura, Kalaburagi, Karnataka</p>
+    <p class="copyright">© 2025 Sampada Tours & Travels</p>
+  </div>
+</footer>
+
+<script>
+/* ===========================
+   UTILITY FUNCTIONS
+=========================== */
+function showAlert(message, type = 'error') {
+  const alertBox = document.getElementById('alertBox');
+  alertBox.textContent = message;
+  alertBox.className = `alert-box ${type}`;
+  alertBox.style.display = 'block';
+  
+  setTimeout(() => {
+    alertBox.style.display = 'none';
+  }, 5000);
+}
+
+function showFieldError(fieldId, message) {
+  const field = document.getElementById(fieldId);
+  const errorSpan = document.getElementById(`${fieldId}Error`);
+  
+  if (field && errorSpan) {
+    field.closest('.form-group').classList.add('error');
+    errorSpan.textContent = message;
+    errorSpan.style.display = 'block';
+  }
+}
+
+function clearFieldError(fieldId) {
+  const field = document.getElementById(fieldId);
+  const errorSpan = document.getElementById(`${fieldId}Error`);
+  
+  if (field && errorSpan) {
+    field.closest('.form-group').classList.remove('error');
+    errorSpan.textContent = '';
+    errorSpan.style.display = 'none';
+  }
+}
+
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+function validatePhone(phone) {
+  const re = /^[0-9]{10}$/;
+  return re.test(phone);
+}
+
+function validatePassword(password) {
+  // At least 8 characters
+  if (password.length < 8) return false;
+  
+  // Contains at least one number or special character
+  if (!/[0-9]/.test(password) && !/[^A-Za-z0-9]/.test(password)) return false;
+  
+  return true;
+}
+
+function setLoadingState(isLoading) {
+  const submitBtn = document.getElementById('submitBtn');
+  
+  if (isLoading) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+  } else {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-user-check"></i> Sign Up';
+  }
+}
+
+/* ===========================
+   PASSWORD STRENGTH METER
+=========================== */
+const passwordInput = document.getElementById("password");
+const meter = document.getElementById("passwordMeter");
+const meterBar = meter?.querySelector("span");
+const strengthText = document.getElementById("passwordText");
+
+if (passwordInput && meter && meterBar && strengthText) {
+  passwordInput.addEventListener("input", () => {
+    const val = passwordInput.value;
+    
+    if (val.length === 0) {
+      meter.className = "password-meter";
+      meterBar.style.width = "0%";
+      strengthText.textContent = "Enter a strong password (min. 8 characters)";
+      strengthText.style.color = "var(--text-muted)";
+      return;
+    }
+
+    let strength = 0;
+
+    // Length check
+    if (val.length >= 8) strength++;
+    if (val.length >= 12) strength++;
+    
+    // Character variety
+    if (/[A-Z]/.test(val)) strength++;
+    if (/[a-z]/.test(val)) strength++;
+    if (/[0-9]/.test(val)) strength++;
+    if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+    meter.className = "password-meter";
+
+    if (strength <= 2) {
+      meter.classList.add("password-weak");
+      strengthText.textContent = "Weak password - add more characters and variety";
+      strengthText.style.color = "#ef4444";
+    } 
+    else if (strength <= 4) {
+      meter.classList.add("password-medium");
+      strengthText.textContent = "Medium strength - could be stronger";
+      strengthText.style.color = "#f59e0b";
+    } 
+    else {
+      meter.classList.add("password-strong");
+      strengthText.textContent = "Strong password!";
+      strengthText.style.color = "#10b981";
+    }
+  });
+}
+
+/* ===========================
+   PASSWORD TOGGLE
+=========================== */
+function setupPasswordToggle(toggleId, inputId) {
+  const toggle = document.getElementById(toggleId);
+  const input = document.getElementById(inputId);
+
+  if (toggle && input) {
+    // Mouse click
+    toggle.addEventListener("click", () => togglePasswordVisibility(toggle, input));
+    
+    // Keyboard support
+    toggle.addEventListener("keypress", (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        togglePasswordVisibility(toggle, input);
+      }
+    });
+  }
+}
+
+function togglePasswordVisibility(toggle, input) {
+  const type = input.getAttribute("type") === "password" ? "text" : "password";
+  input.setAttribute("type", type);
+  
+  const icon = toggle.querySelector('i');
+  icon.className = type === "password" ? "fas fa-eye" : "fas fa-eye-slash";
+  
+  toggle.setAttribute(
+    "aria-label", 
+    type === "password" ? "Show password" : "Hide password"
+  );
+}
+
+setupPasswordToggle("togglePassword", "password");
+setupPasswordToggle("toggleConfirmPassword", "confirmPassword");
+
+/* ===========================
+   REGISTER SUBMIT
+=========================== */
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  // Clear previous errors
+  ['fullName', 'phone', 'email', 'password', 'confirmPassword'].forEach(clearFieldError);
+  document.getElementById('alertBox').style.display = 'none';
+
+  // Get form values
+  const name = document.getElementById("fullName").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+
+  // Validation
+  let isValid = true;
+
+  if (!name) {
+    showFieldError('fullName', 'Full name is required');
+    isValid = false;
+  } else if (name.length < 3) {
+    showFieldError('fullName', 'Name must be at least 3 characters');
+    isValid = false;
+  }
+
+  if (!phone) {
+    showFieldError('phone', 'Phone number is required');
+    isValid = false;
+  } else if (!validatePhone(phone)) {
+    showFieldError('phone', 'Please enter a valid 10-digit phone number');
+    isValid = false;
+  }
+
+  if (!email) {
+    showFieldError('email', 'Email is required');
+    isValid = false;
+  } else if (!validateEmail(email)) {
+    showFieldError('email', 'Please enter a valid email address');
+    isValid = false;
+  }
+
+  if (!password) {
+    showFieldError('password', 'Password is required');
+    isValid = false;
+  } else if (!validatePassword(password)) {
+    showFieldError('password', 'Password must be at least 8 characters with numbers or special characters');
+    isValid = false;
+  }
+
+  if (!confirmPassword) {
+    showFieldError('confirmPassword', 'Please confirm your password');
+    isValid = false;
+  } else if (password !== confirmPassword) {
+    showFieldError('confirmPassword', 'Passwords do not match');
+    isValid = false;
+  }
+
+  if (!isValid) {
+    showAlert('Please fix the errors in the form');
+    return;
+  }
+
+  setLoadingState(true);
+
+  try {
+    const res = await fetch("http://localhost:3000/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      body: JSON.stringify({ name, phone, email, password })
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      showAlert(result.message || "Account created successfully! Redirecting to login...", 'success');
+      
+      // Redirect after short delay
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2000);
+    } else {
+      showAlert(result.message || "Registration failed. Please check your details and try again.");
+      setLoadingState(false);
+    }
+  } catch (err) {
+    console.error("Registration Server Error:", err);
+    showAlert("Server not responding. Please try again later.");
+    setLoadingState(false);
+  }
+});
+
+/* ===========================
+   CLEAR ERRORS ON INPUT
+=========================== */
+['fullName', 'phone', 'email', 'password', 'confirmPassword'].forEach(fieldId => {
+  const field = document.getElementById(fieldId);
+  if (field) {
+    field.addEventListener('input', () => clearFieldError(fieldId));
+  }
+});
+
+/* ===========================
+   REAL-TIME PASSWORD MATCH CHECK
+=========================== */
+document.getElementById('confirmPassword').addEventListener('input', () => {
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  
+  if (confirmPassword && password !== confirmPassword) {
+    showFieldError('confirmPassword', 'Passwords do not match');
+  } else {
+    clearFieldError('confirmPassword');
+  }
+});
+</script>
+
+</body>
+</html>

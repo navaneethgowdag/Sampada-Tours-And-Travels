@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Car Rentals | Sampada Tours & Travels</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo">
+    <a href="index.html">Sampada Tours & Travels</a>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="tours.html">Tours</a>
+    <a href="car-rentals.html" class="active">Car Rentals</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="auth-links" id="authLinks">
+    <a href="login.html" class="btn-secondary" id="loginBtn">Login</a>
+    <a href="register.html" class="btn-primary" id="signupBtn">Sign Up</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO / INTRO -->
+  <section class="hero-intro">
+    <div class="container">
+      <h2>Your Journey Starts Here</h2>
+      <p>Reliable and comfortable car rentals for local and outstation travel. Choose from our diverse fleet.</p>
+    </div>
+  </section>
+
+  <!-- VEHICLE FLEET -->
+  <section class="section">
+    <div class="container">
+      <h2><i class="fas fa-car"></i> Our Fleet of Vehicles</h2>
+
+      <div class="card-grid">
+
+        <div class="card">
+          <img src="images/sedan.jpg" alt="Sedan Car" class="card-image">
+          <div class="card-content">
+            <h3>Sedan (4-Seater)</h3>
+            <p>Model: Honda City / Dzire</p>
+            <div class="features">
+              <span><i class="fas fa-suitcase"></i> Luggage: 2</span>
+              <span><i class="fas fa-cogs"></i> AC & Music</span>
+            </div>
+            <a href="book-car.html?vehicle=Sedan" class="btn-primary card-cta">Book Sedan</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="images/suv.jpg" alt="SUV Car" class="card-image">
+          <div class="card-content">
+            <h3>SUV (6-Seater)</h3>
+            <p>Model: Ertiga / Innova</p>
+            <div class="features">
+              <span><i class="fas fa-user-friends"></i> Max 6 Pax</span>
+              <span><i class="fas fa-road"></i> Comfort Drive</span>
+            </div>
+            <a href="book-car.html?vehicle=SUV" class="btn-primary card-cta">Book SUV</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="images/tempo.jpg" alt="Tempo Traveller" class="card-image">
+          <div class="card-content">
+            <h3>Tempo Traveller (12-Seater)</h3>
+            <p>Model: Force Traveller</p>
+            <div class="features">
+              <span><i class="fas fa-users"></i> Ideal for Groups</span>
+              <span><i class="fas fa-door-open"></i> High Clearance</span>
+            </div>
+            <a href="book-car.html?vehicle=Tempo" class="btn-primary card-cta">Book Tempo</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING TABLE -->
+  <section class="section">
+    <div class="container">
+      <h2><i class="fas fa-tags"></i> Transparent Pricing</h2>
+
+      <div class="table-responsive">
+        <table class="pricing-table">
+          <caption>All prices are in Indian Rupees (₹)</caption>
+          <thead>
+            <tr>
+              <th>Vehicle</th>
+              <th>Seating</th>
+              <th>Local Rate (₹/KM)</th>
+              <th>Outstation Rate (₹/KM)</th>
+              <th>Driver Allowance / Day</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><i class="fas fa-car-side"></i> Sedan</td>
+              <td>4</td>
+              <td>₹12</td>
+              <td>₹13</td>
+              <td>₹300</td>
+            </tr>
+            <tr>
+              <td><i class="fas fa-shuttle-van"></i> SUV</td>
+              <td>6</td>
+              <td>₹15</td>
+              <td>₹16</td>
+              <td>₹350</td>
+            </tr>
+            <tr>
+              <td><i class="fas fa-bus"></i> Tempo Traveller</td>
+              <td>12</td>
+              <td>₹20</td>
+              <td>₹22</td>
+              <td>₹400</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="pricing-note">
+        <i class="fas fa-info-circle"></i> 
+        <strong>Note:</strong> Minimum billing of 250 KM/day applies for outstation trips. 
+        Driver allowance is charged per day and can be waived if you prefer to drive yourself.
+      </p>
+    </div>
+  </section>
+
+  <!-- DRIVERS -->
+  <section class="section">
+    <div class="container">
+      <h2><i class="fas fa-user-shield"></i> Meet Our Experienced Drivers</h2>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-content">
+            <h3>Ravi Kumar</h3>
+            <p><i class="fas fa-calendar-alt"></i> Age: 38 years</p>
+            <p><i class="fas fa-graduation-cap"></i> Experience: 12 years</p>
+            <p>Expert in outstation and long-distance routes.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <h3>Mahesh Patil</h3>
+            <p><i class="fas fa-calendar-alt"></i> Age: 42 years</p>
+            <p><i class="fas fa-graduation-cap"></i> Experience: 15 years</p>
+            <p>Specialist in temple and heritage tours.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <h3>Sunil Gowda</h3>
+            <p><i class="fas fa-calendar-alt"></i> Age: 35 years</p>
+            <p><i class="fas fa-graduation-cap"></i> Experience: 10 years</p>
+            <p>Friendly driver with city tour expertise.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <h3>Ready to start your journey?</h3>
+      <p>Calculate your trip cost and secure your car rental in minutes!</p>
+      <a href="book-car.html" class="btn-primary large-cta">
+        <i class="fas fa-angle-double-right"></i> Book Your Car Now
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="main-footer">
+  <div class="footer-content">
+    <p>Sampada Tours & Travels</p>
+    <p class="address"><i class="fas fa-map-marker-alt"></i> Kirana Bazar Road, Mominpura, Kalaburagi, Karnataka</p>
+    <p class="copyright">© 2025 Sampada Tours & Travels</p>
+  </div>
+</footer>
+
+<script>
+/* ===========================
+   AUTHENTICATION STATE MANAGEMENT
+=========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const isAuthenticated = sessionStorage.getItem("isAuthenticated");
+  const username = sessionStorage.getItem("username");
+
+  const loginBtn = document.getElementById("loginBtn");
+  const signupBtn = document.getElementById("signupBtn");
+  const authLinks = document.getElementById("authLinks");
+
+  if (isAuthenticated === "true" && username) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (signupBtn) signupBtn.style.display = "none";
+
+    if (authLinks) {
+      authLinks.innerHTML = `
+        <span style="font-weight:600; margin-right:10px;">
+          <i class="fas fa-user-circle"></i> Hi, ${username}
+        </span>
+        <button id="logoutBtn" class="btn-secondary">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      `;
+
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", async () => {
+          try {
+            await fetch("http://localhost:3000/logout", {
+              method: "POST",
+              credentials: 'include'
+            });
+          } catch (err) {
+            console.error("Logout error:", err);
+          }
+
+          sessionStorage.removeItem("isAuthenticated");
+          sessionStorage.removeItem("username");
+          
+          const tempMessage = document.createElement('div');
+          tempMessage.textContent = 'You have been logged out successfully.';
+          tempMessage.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:15px 20px;border-radius:5px;z-index:9999;';
+          document.body.appendChild(tempMessage);
+          
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1000);
+        });
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>

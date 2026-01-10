@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Tour Packages | Sampada Tours & Travels</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo">
+    <a href="index.html">Sampada Tours & Travels</a>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="tours.html" class="active">Tours</a>
+    <a href="car-rentals.html">Car Rentals</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="auth-links" id="authLinks">
+    <a href="login.html" class="btn-secondary" id="loginBtn">Login</a>
+    <a href="register.html" class="btn-primary" id="signupBtn">Sign Up</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO / INTRO -->
+  <section class="hero-intro">
+    <div class="container">
+      <h2>Choose Your Next Adventure</h2>
+      <p>Discover the rich history and beauty of Karnataka with our curated travel packages.</p>
+    </div>
+  </section>
+
+  <!-- TOUR PACKAGES -->
+  <section class="section">
+    <div class="container">
+      <h2><i class="fas fa-route"></i> Our Predefined Tour Packages</h2>
+
+      <div class="card-grid">
+
+        <!-- HAMPI -->
+        <div class="card">
+          <img src="images/hampi.jpg" alt="Hampi Tour - UNESCO World Heritage" class="card-image">
+          <span class="duration-badge">2-Day Package</span>
+          <div class="card-content">
+            <h3>Hampi Tour</h3>
+            <p>Explore the magnificent temple ruins and unique landscape of this UNESCO site.</p>
+            <div class="tour-meta">
+              <span><i class="far fa-clock"></i> 2 Days / 1 Night</span>
+              <span><i class="fas fa-bed"></i> Hotel Stay Included</span>
+            </div>
+            <div class="price-action">
+              <p class="cost">Starting from ₹3,500 / person</p>
+              <a href="booking.html?package=Hampi" class="btn-primary card-cta">
+                <i class="fas fa-book"></i> Book Now
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- BIDAR -->
+        <div class="card">
+          <img src="images/bidar.jpg" alt="Bidar Fort and Heritage" class="card-image">
+          <span class="duration-badge">1-Day Trip</span>
+          <div class="card-content">
+            <h3>Bidar Tour</h3>
+            <p>A historical journey to the Bahmani capital, featuring the famous Bidar Fort and tombs.</p>
+            <div class="tour-meta">
+              <span><i class="far fa-clock"></i> 1 Day</span>
+              <span><i class="fas fa-map-pin"></i> Local Heritage</span>
+            </div>
+            <div class="price-action">
+              <p class="cost">Starting from ₹2,500 / person</p>
+              <a href="booking.html?package=Bidar" class="btn-primary card-cta">
+                <i class="fas fa-book"></i> Book Now
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIJAYAPURA -->
+        <div class="card">
+          <img src="images/vijayapura.jpg" alt="Vijayapura Gol Gumbaz" class="card-image">
+          <span class="duration-badge">2-Day Package</span>
+          <div class="card-content">
+            <h3>Vijayapura Tour</h3>
+            <p>Discover architectural marvels like Gol Gumbaz and Ibrahim Rouza in this historical city.</p>
+            <div class="tour-meta">
+              <span><i class="far fa-clock"></i> 2 Days / 1 Night</span>
+              <span><i class="fas fa-building"></i> Famous Monuments</span>
+            </div>
+            <div class="price-action">
+              <p class="cost">Starting from ₹4,500 / person</p>
+              <a href="booking.html?package=Vijayapura" class="btn-primary card-cta">
+                <i class="fas fa-book"></i> Book Now
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CUSTOM TOUR CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="custom-cta-box">
+
+        <div class="text-content">
+          <h2><i class="fas fa-cogs"></i> Design Your Own Trip</h2>
+          <p>Can't find the perfect itinerary? We specialize in creating personalized tours tailored to your group size, budget, and desired destinations across India.</p>
+          <ul>
+            <li><i class="fas fa-check-circle"></i> Flexible Destinations</li>
+            <li><i class="fas fa-check-circle"></i> Choose Duration and Pace</li>
+            <li><i class="fas fa-check-circle"></i> Pick Specific Vehicle/Hotel Type</li>
+          </ul>
+        </div>
+
+        <div class="action-content">
+          <img src="images/custom-package.jpg" alt="Custom Package Image" class="custom-image">
+          <a href="booking.html?package=Custom" class="btn-primary large-cta">
+            <i class="fas fa-pen-fancy"></i> Request Custom Package Quote
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="main-footer">
+  <div class="footer-content">
+    <p>Sampada Tours & Travels</p>
+    <p class="address"><i class="fas fa-map-marker-alt"></i> Kirana Bazar Road, Mominpura, Kalaburagi, Karnataka</p>
+    <p class="copyright">© 2025 Sampada Tours & Travels</p>
+  </div>
+</footer>
+
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const token = localStorage.getItem("token");
+  const username = localStorage.getItem("username");
+
+  const loginBtn = document.getElementById("loginBtn");
+  const signupBtn = document.getElementById("signupBtn");
+  const authLinks = document.getElementById("authLinks");
+
+  if (token) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (signupBtn) signupBtn.style.display = "none";
+
+    if (authLinks) {
+      authLinks.innerHTML = `
+        <span style="font-weight:600; margin-right:10px;">
+          👋 Hi, ${username || "User"}
+        </span>
+        <button id="logoutBtn" class="btn-secondary">Logout</button>
+      `;
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        alert("You have been logged out.");
+        window.location.href = "index.html";
+      });
+    }
+  }
+
+});
+</script>
+
+</body>
+</html>

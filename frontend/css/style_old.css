@@ -1,0 +1,1637 @@
+/* --- 1. CSS Variables and Global Reset --- */
+:root {
+    --primary-color: #007bff; /* A clean blue for branding */
+    --secondary-color: #6c757d;
+    --background-color: #f4f7fa; /* Light background */
+    --surface-color: #ffffff; /* Card/Container background */
+    --text-color: #343a40;
+    --border-color: #dee2e6;
+    --success-color: #28a745;
+    --font-family: 'Arial', sans-serif;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #0056b3;
+}
+
+/* --- 2. Layout & Typography --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section {
+    padding: 40px 0;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: var(--text-color);
+    margin-bottom: 25px;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+/* --- 3. Header & Navigation (Navbar) --- */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background-color: var(--surface-color);
+    box-shadow: var(--box-shadow);
+    position: sticky; /* Sticky header for better UX */
+    top: 0;
+    z-index: 1000;
+}
+
+.logo a {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: var(--primary-color);
+    letter-spacing: 0.5px;
+}
+
+.main-nav a {
+    margin: 0 15px;
+    font-size: 1em;
+    padding: 5px 0;
+    color: var(--text-color);
+    position: relative;
+}
+
+.main-nav a.active {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Underline effect for active/hover */
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.main-nav a:hover::after,
+.main-nav a.active::after {
+    width: 100%;
+}
+
+/* --- Buttons --- */
+.btn-primary, .btn-secondary {
+    padding: 8px 15px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--surface-color);
+    margin-left: 10px;
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-color);
+    color: var(--surface-color);
+}
+
+/* --- 4. Form Styling (Booking Form) --- */
+.booking-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns for fieldsets */
+    gap: 30px;
+    background-color: var(--surface-color);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-top: 20px;
+}
+
+/* Full width for buttons on grid */
+.btn-submit {
+    grid-column: 1 / -1; 
+}
+
+fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    margin: 0; /* Override default margin */
+}
+
+legend {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 0 10px;
+    color: var(--primary-color);
+}
+
+.form-instruction {
+    margin-bottom: 20px;
+    color: var(--secondary-color);
+    font-size: 0.9em;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: #fff;
+    font-size: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Read-only fields styling (Cost Summary) */
+.readonly-group input[readonly],
+.total-amount-group input[readonly] {
+    background-color: #e9ecef;
+    cursor: default;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.total-amount-group input[readonly] {
+    font-size: 1.2em;
+    padding: 15px;
+    background-color: #d4edda; /* Light success color */
+    color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    margin-top: 20px;
+}
+
+.btn-submit:hover {
+    background-color: #1e7e34;
+    transform: translateY(-2px);
+}
+
+.btn-submit i {
+    margin-right: 8px;
+}
+
+/* Checkbox group styling */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.checkbox-group label {
+    margin-bottom: 0;
+    display: inline-block;
+}
+
+.info-icon {
+    margin-left: 8px;
+    color: var(--secondary-color);
+    cursor: help;
+}
+
+/* --- 5. Footer --- */
+.main-footer {
+    background-color: var(--text-color);
+    color: #adb5bd;
+    padding: 30px 0;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.footer-content p {
+    margin: 5px 0;
+}
+
+.footer-content .address {
+    font-size: 0.9em;
+}
+
+.footer-content i {
+    margin-right: 5px;
+}
+
+.footer-content p:first-child {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--surface-color);
+    margin-bottom: 15px;
+}
+
+/* --- 6. Responsiveness --- */
+@media (max-width: 900px) {
+    .main-header {
+        flex-direction: column;
+        padding: 15px 20px;
+    }
+    
+    .main-nav {
+        margin: 15px 0;
+    }
+
+    .booking-form {
+        grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    }
+
+    h1 {
+        padding-top: 10px;
+    }
+}
+
+@media (max-width: 500px) {
+    .auth-links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* --- Form Grid Adjustments for Package Booking --- */
+
+/* Modify the grid specifically for the package booking form */
+.package-booking-form {
+    /* Use a two-column grid structure */
+    grid-template-columns: 1fr 1fr;
+    /* Ensure the user info fieldset spans both columns */
+    grid-template-rows: auto auto auto 1fr;
+}
+
+.package-selection-details {
+    grid-column: 1 / 2; /* Left Column */
+}
+
+.custom-fields {
+    grid-column: 1 / 2; /* Left Column, right under the package selection */
+    /* Add a visual cue to the custom fieldset */
+    border-left: 5px solid var(--primary-color); 
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.cost-summary {
+    grid-column: 2 / 3; /* Right Column */
+    grid-row: 1 / span 2; /* Span the height of the selection and custom fields */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.user-info {
+    grid-column: 1 / -1; /* Span Full Width */
+}
+
+/* Ensure the total amount stands out */
+.cost-summary .total-amount-group input[readonly] {
+    font-size: 1.5em;
+    padding: 20px 15px;
+}
+
+.calculation-note {
+    font-size: 0.85em;
+    color: var(--secondary-color);
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-color);
+}
+
+/* --- Responsiveness for Package Booking Form --- */
+@media (max-width: 900px) {
+    .package-booking-form {
+        /* Stack all columns on smaller screens */
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .cost-summary {
+        grid-column: 1 / -1; /* Full width */
+        grid-row: auto; /* Allow natural flow */
+        /* Order the cost summary logically */
+        order: 3; 
+    }
+
+    .package-selection-details {
+        order: 1;
+    }
+
+    .custom-fields {
+        order: 2;
+    }
+
+    .user-info {
+        order: 4;
+    }
+}
+
+/* --- 1. Hero Introduction Section --- */
+.hero-intro {
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.car-hero h2 {
+    color: white;
+    font-size: 3em;
+    margin-bottom: 10px;
+    border-bottom: none;
+}
+
+.car-hero p {
+    font-size: 1.2em;
+    opacity: 0.9;
+}
+
+/* --- 2. Card Grid Layout --- */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.card {
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Vehicle Card Styling */
+.vehicle-card .card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.vehicle-card .card-content {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.vehicle-card h3 {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.vehicle-card .model {
+    color: var(--secondary-color);
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+.vehicle-card .features {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-top: 1px dashed var(--border-color);
+}
+
+.vehicle-card .features span {
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.vehicle-card .card-cta {
+    margin-top: auto; /* Pushes the button to the bottom */
+    text-align: center;
+    padding: 10px;
+}
+
+/* --- 3. Pricing Table Styling --- */
+.pricing-section h2 {
+    margin-bottom: 15px;
+}
+
+.table-responsive {
+    overflow-x: auto; /* Enables horizontal scroll on small screens */
+}
+
+.pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--surface-color);
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.pricing-table caption {
+    text-align: left;
+    margin-bottom: 10px;
+    font-style: italic;
+    color: var(--secondary-color);
+}
+
+.pricing-table th, .pricing-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pricing-table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pricing-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa; /* Zebra striping */
+}
+
+.pricing-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.pricing-table td i {
+    margin-right: 5px;
+    color: var(--primary-color);
+}
+
+.pricing-note {
+    text-align: center;
+    color: var(--secondary-color);
+    font-size: 0.9em;
+    padding-top: 10px;
+}
+
+/* --- 4. Driver Cards Styling --- */
+.driver-card {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: none; /* Less shadow for team cards */
+}
+
+.driver-card h3 {
+    color: var(--text-color);
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.driver-card p {
+    margin: 8px 0;
+}
+
+.driver-card i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+.driver-card .specialty {
+    font-style: italic;
+    color: var(--primary-color);
+    margin-top: 15px;
+    font-weight: 500;
+}
+
+/* --- 5. Call to Action (CTA) Section --- */
+.cta-section {
+    text-align: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 50px 0;
+    margin-top: 40px;
+}
+
+.cta-section h3 {
+    font-size: 2em;
+    color: white;
+    margin-bottom: 10px;
+    border-bottom: none;
+}
+
+.cta-section p {
+    font-size: 1.1em;
+    margin-bottom: 25px;
+    opacity: 0.9;
+}
+
+.large-cta {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border: 2px solid white;
+    background-color: white;
+    color: var(--primary-color);
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.large-cta:hover {
+    background-color: transparent;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Assuming you have the base form styles (booking-form, form-group, input, button) already */
+
+/* --- 1. Feedback Form Layout (Single Column) --- */
+.feedback-page-container {
+    max-width: 700px; /* Make the form centered and narrower */
+    margin: 0 auto;
+}
+
+.section-description {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+    color: var(--secondary-color);
+}
+
+.feedback-form {
+    /* Override the two-column grid from the booking form */
+    display: block; 
+    gap: 0;
+    padding: 30px;
+}
+
+.feedback-form fieldset {
+    margin-bottom: 25px;
+}
+
+/* Ensure form groups are full width */
+.feedback-form .form-group {
+    width: 100%;
+}
+
+/* --- 2. Star Rating Component Styling --- */
+.rating-group {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.star-rating {
+    font-size: 2em;
+    color: var(--border-color); /* Unfilled stars are light grey */
+    cursor: pointer;
+    display: inline-flex;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.star-rating i {
+    transition: color 0.1s;
+}
+
+/* Styles for interactivity */
+.star-rating i:hover ~ i {
+    color: var(--border-color);
+}
+
+.star-rating i.hover-fill,
+.star-rating i:hover {
+    color: #ffc107; /* Standard gold color for hover fill */
+}
+
+/* Style for clicked/active rating (Persistent fill) */
+.star-rating i.clicked-fill {
+    color: #ffc107; 
+}
+
+.rating-label {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: var(--primary-color);
+    min-height: 20px;
+}
+
+/* --- 3. Message Area --- */
+#message {
+    min-height: 150px;
+    resize: vertical; /* Allow vertical resizing but not horizontal */
+}
+
+/* Submit button adjustment */
+.feedback-form .btn-submit {
+    margin-top: 20px;
+    background-color: var(--primary-color);
+}
+
+.feedback-form .btn-submit:hover {
+    background-color: #0056b3;
+}
+
+/* --- 1. Hero Section (Homepage Specific) --- */
+.hero-section {
+    position: relative;
+    height: 90vh; /* Full viewport height for a dramatic effect */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    /* Use a visually appealing, high-resolution background image */
+    background: url('../images/kalaburagi-hero.jpg') no-repeat center center/cover;
+}
+/*  */
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Dark overlay for better text readability */
+    background-color: rgba(0, 0, 0, 0.4); 
+}
+
+.hero-content {
+    position: relative; /* Keep content above the overlay */
+    z-index: 10;
+    color: white;
+    max-width: 900px;
+}
+
+.hero-text h1 {
+    font-size: 3.8em;
+    margin-bottom: 15px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: white; /* Override default H1 color */
+    border-bottom: none;
+}
+
+.hero-text .tagline {
+    font-size: 1.4em;
+    margin-bottom: 40px;
+    opacity: 0.95;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.cta-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.large-cta {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.secondary-cta {
+    /* Reverse colors for secondary CTA to provide contrast */
+    background-color: rgba(255, 255, 255, 0.1); 
+    color: white;
+    border: 2px solid white;
+}
+
+.secondary-cta:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* --- 2. Service Cards (Simple & Direct) --- */
+.service-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.service-card {
+    text-align: center;
+    padding: 0;
+    height: 100%;
+    display: block;
+}
+
+.service-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+/* --- 3. Tour Feature Cards (Image + Price) --- */
+.tour-card {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.tour-card .card-content {
+    padding: 15px;
+    min-height: 120px;
+}
+
+.tour-card h4 {
+    font-size: 1.3em;
+    margin-bottom: 5px;
+}
+
+.price-tag {
+    position: absolute;
+    top: 15px;
+    right: 0;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 4px 0 0 4px;
+    font-weight: bold;
+    font-size: 0.95em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.tour-card:hover .card-image {
+    transform: scale(1.05);
+    transition: transform 0.5s ease;
+}
+
+/* --- 4. Testimonial Section --- */
+.testimonial-section {
+    background-color: #e9f0f7; /* Light grey/blue background for contrast */
+    padding: 60px 0;
+}
+
+.testimonial-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.testimonial-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px;
+    text-align: center;
+    border-left: 3px solid var(--primary-color);
+    background-color: var(--surface-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid var(--primary-color);
+}
+
+.testimonial-body .quote {
+    font-style: italic;
+    color: var(--text-color);
+    margin-bottom: 10px;
+}
+
+.testimonial-body h4 {
+    font-size: 1.1em;
+    margin: 5px 0;
+    color: var(--primary-color);
+}
+
+.testimonial-body .role {
+    font-size: 0.9em;
+    color: var(--secondary-color);
+}
+
+/* --- 5. Gallery Section --- */
+.photo-grid {
+    /* Use masonry-like effect with aspect ratio */
+    grid-template-columns: repeat(3, 1fr); 
+    grid-auto-rows: 250px; /* Fixed height for gallery items */
+}
+
+.gallery-item {
+    overflow: hidden;
+    display: block;
+}
+
+.gallery-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease, opacity 0.3s;
+}
+
+.gallery-photo:hover {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+/* --- 6. Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .hero-text h1 {
+        font-size: 2.5em;
+    }
+    
+    .hero-text .tagline {
+        font-size: 1.1em;
+    }
+
+    .cta-group {
+        flex-direction: column;
+    }
+
+    .photo-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- 1. Tour Page Layout & Intro --- */
+.tour-intro {
+    background: #f4f7fa;
+    padding: 40px 0;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    margin-bottom: 30px;
+}
+
+.tour-intro h2 {
+    font-size: 2.2em;
+    color: var(--text-color);
+    margin-bottom: 5px;
+    border-bottom: none;
+}
+
+.tour-packages-section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* --- 2. Tour Listing Card Styles --- */
+.tour-listing-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.tour-card {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.tour-card .card-content {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.tour-card h3 {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.tour-card .description {
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+}
+
+.tour-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-top: 1px dashed var(--border-color);
+    border-bottom: 1px dashed var(--border-color);
+    margin-bottom: 15px;
+    font-size: 0.95em;
+}
+
+.tour-meta i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+.price-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; /* Push to the bottom */
+}
+
+.price-action .cost {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--success-color);
+}
+
+.tour-card .card-cta {
+    padding: 10px 15px;
+    font-size: 0.9em;
+}
+
+/* --- 3. Custom Tour CTA Section --- */
+.custom-tour-cta {
+    background-color: var(--surface-color);
+    padding: 50px 0;
+    margin-top: 40px;
+    border-top: 5px solid var(--primary-color);
+    box-shadow: var(--box-shadow);
+}
+
+.custom-cta-box {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.custom-cta-box .text-content {
+    flex: 2;
+}
+
+.custom-cta-box .action-content {
+    flex: 1;
+    text-align: center;
+}
+
+.custom-cta-box h2 {
+    text-align: left;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    border-bottom: none;
+}
+
+.custom-cta-box ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 20px;
+}
+
+.custom-cta-box ul li {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.custom-cta-box ul i {
+    color: var(--success-color);
+    margin-right: 10px;
+}
+
+.custom-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    border: 3px solid var(--border-color);
+}
+
+.custom-cta-box .large-cta {
+    font-size: 1em;
+    padding: 12px 20px;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .custom-cta-box {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .custom-cta-box .text-content,
+    .custom-cta-box .action-content {
+        width: 100%;
+    }
+
+    .custom-cta-box h2 {
+        text-align: center;
+    }
+
+    .custom-cta-box ul {
+        text-align: left;
+        padding-left: 20px;
+    }
+}
+
+/* --- 1. Base Authentication Layout --- */
+.auth-container {
+    min-height: 80vh; /* Ensures the container fills the viewport space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: var(--background-color);
+}
+
+.auth-box {
+    background-color: var(--surface-color);
+    padding: 40px;
+    border-radius: var(--border-radius-large);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px; /* Constrain width for focus */
+    text-align: center;
+}
+
+.auth-box h2 {
+    font-size: 2em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    border-bottom: none;
+    text-align: center;
+}
+
+.auth-message {
+    font-size: 1.1em;
+    color: var(--secondary-color);
+    margin-bottom: 30px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between form groups */
+}
+
+/* --- 2. Icon Input Styling --- */
+.icon-input .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.icon-input .icon {
+    position: absolute;
+    left: 15px;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    z-index: 2;
+}
+
+.icon-input input {
+    /* Adjust input padding to make space for the icon */
+    padding-left: 45px !important; 
+    width: 100%;
+    transition: border-color 0.3s;
+}
+
+.icon-input input:focus {
+    border-color: var(--primary-color);
+}
+
+/* --- 3. Action Links and Buttons --- */
+.forgot-password {
+    display: block;
+    text-align: right;
+    font-size: 0.9em;
+    color: var(--primary-color);
+    margin-top: 5px;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.auth-submit-btn {
+    margin-top: 10px;
+    padding: 12px;
+    font-size: 1.1em;
+    text-transform: uppercase;
+}
+
+.alt-action {
+    margin-top: 25px !important;
+    font-size: 1em;
+    color: var(--text-color);
+}
+
+.auth-link {
+    color: var(--primary-color);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
+
+/* --- 4. Responsive Adjustment --- */
+@media (max-width: 500px) {
+    .auth-box {
+        padding: 30px 20px;
+    }
+    .auth-box h2 {
+        font-size: 1.8em;
+    }
+}
+/* ======================================= */
+/* 9. Feedback Form Specific Styles */
+/* ======================================= */
+
+/* Reusing the centered layout for single-purpose forms */
+.feedback-page-container {
+    max-width: 700px; 
+    margin: 40px auto 60px; /* Centered, generous vertical padding */
+}
+
+.section-description {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+    color: var(--secondary-color);
+}
+
+.feedback-form {
+    background-color: var(--surface-color);
+    padding: 30px;
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--box-shadow);
+    display: flex; /* Use flex for clean vertical stacking */
+    flex-direction: column;
+    gap: 15px; /* Spacing between input groups */
+}
+
+/* --- Form Grouping and Fields --- */
+.feedback-form fieldset {
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: var(--border-radius);
+}
+
+.feedback-form legend {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: var(--primary-color);
+    padding: 0 10px;
+    margin-left: -10px; /* Pull the legend slightly out of the padding */
+}
+
+.feedback-form label {
+    font-weight: 600;
+    margin-top: 5px;
+    display: block; /* Ensure label is always on its own line */
+}
+
+.feedback-form input[type="text"],
+.feedback-form input[type="email"],
+.feedback-form input[type="date"],
+.feedback-form select,
+.feedback-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.feedback-form input:focus,
+.feedback-form select:focus,
+.feedback-form textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.1);
+}
+
+.feedback-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* --- Star Rating Component Styles (Copied from previous Feedback/Auth enhancements) --- */
+.rating-group {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.star-rating {
+    font-size: 2em;
+    color: var(--border-color);
+    cursor: pointer;
+    display: inline-flex;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.star-rating i {
+    transition: color 0.1s;
+}
+
+/* Styles for interactivity */
+.star-rating i.hover-fill,
+.star-rating i:hover {
+    color: #ffc107; /* Standard gold color for hover fill */
+}
+
+/* Style for clicked/active rating (Persistent fill) */
+.star-rating i.clicked-fill {
+    color: #ffc107; 
+}
+
+.rating-label {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: var(--primary-color);
+    min-height: 20px;
+}
+
+/* --- Submit Button --- */
+.feedback-form button[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.feedback-form button[type="submit"]:hover {
+    background-color: #0056b3; /* Slightly darker shade */
+}
+
+.feedback-form button[type="submit"]:active {
+    transform: scale(0.99);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .feedback-page-container {
+        padding: 20px;
+    }
+}
+/* ======================================= */
+/* 9. Tour Packages Page Styles (Responsive Focus) */
+/* ======================================= */
+
+/* --- 9.1 Tour Page Layout & Intro --- */
+.tour-intro {
+    background: #f4f7fa;
+    padding: 40px 0;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    margin-bottom: 30px;
+}
+
+.tour-intro h2 {
+    font-size: 2.2em;
+    color: var(--text-color);
+    margin-bottom: 5px;
+    border-bottom: none;
+}
+
+.tour-packages-section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* --- 9.2 Tour Listing Card Styles --- */
+.tour-listing-grid {
+    /* Base for larger screens: min width 300px for each column */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 30px;
+}
+
+.tour-card {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tour-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(var(--primary-color-rgb), 0.1);
+}
+
+.tour-card .card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.tour-card .card-content {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.tour-card h3 {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.tour-card .description {
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+
+.tour-meta {
+    display: flex;
+    flex-wrap: wrap; /* Allows wrap on small screens */
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    border-top: 1px dashed var(--border-color);
+    border-bottom: 1px dashed var(--border-color);
+    margin-bottom: 15px;
+    font-size: 0.95em;
+}
+
+.tour-meta i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+.price-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; /* Push to the bottom */
+}
+
+.price-action .cost {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--success-color); /* Use a distinct color for pricing */
+}
+
+.tour-card .card-cta {
+    padding: 10px 15px;
+    font-size: 0.9em;
+}
+
+
+/* --- 9.3 Custom Tour CTA Section --- */
+.custom-tour-cta {
+    background-color: var(--surface-color);
+    padding: 50px 0;
+    margin-top: 40px;
+    border-top: 5px solid var(--primary-color);
+    box-shadow: var(--box-shadow);
+}
+
+.custom-cta-box {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.custom-cta-box .text-content {
+    flex: 2;
+}
+
+.custom-cta-box .action-content {
+    flex: 1;
+    text-align: center;
+}
+
+.custom-cta-box h2 {
+    text-align: left;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    border-bottom: none;
+}
+
+.custom-cta-box ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 20px;
+}
+
+.custom-cta-box ul li {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.custom-cta-box ul i {
+    color: var(--success-color);
+    margin-right: 10px;
+}
+
+.custom-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    border: 3px solid var(--border-color);
+}
+
+.custom-cta-box .large-cta {
+    font-size: 1em;
+    padding: 12px 20px;
+}
+
+
+/* --- 9.4 Responsiveness (Matching other pages) --- */
+
+/* Tablet & Smaller Desktop Adjustments */
+@media (max-width: 992px) {
+    .tour-listing-grid {
+        /* Switch to 2 columns if screen size gets tight */
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px; /* Add slight padding on the sides */
+    }
+
+    .tour-listing-grid {
+        /* Stack cards in a single column on mobile */
+        grid-template-columns: 1fr;
+    }
+    
+    .tour-card .card-image {
+        height: 180px;
+    }
+
+    .price-action {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .custom-cta-box {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .custom-cta-box .text-content,
+    .custom-cta-box .action-content {
+        width: 100%;
+    }
+
+    .custom-cta-box h2 {
+        text-align: center;
+    }
+
+    .custom-cta-box ul {
+        text-align: left;
+        padding-left: 20px;
+    }
+}
+
+/* --- New section for Tour Page Layout (Tours.html) --- */
+
+.tour-packages-section h2 {
+    text-align: left; /* Align title left for content-with-sidebar layout */
+    margin-bottom: var(--spacing-md);
+}
+
+.tour-layout-grid {
+    display: grid;
+    /* Define two columns: Sidebar (1 unit) and Main Content (3 units) */
+    grid-template-columns: 1fr 3fr; 
+    gap: var(--spacing-lg);
+}
+
+/* Sidebar Styles */
+.tour-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.filter-card, .help-card {
+    padding: var(--spacing-md);
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.filter-card h3, .help-card h3 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-sm);
+    color: var(--primary-color);
+}
+
+/* Form Styling within the filter card */
+.filter-card .form-group {
+    margin-bottom: var(--spacing-sm);
+}
+.filter-card label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+
+/* Responsive adjustment for the new grid */
+@media (max-width: 992px) {
+    /* Stack the sidebar and main content on tablets/small desktops */
+    .tour-layout-grid {
+        grid-template-columns: 1fr; /* Single column */
+    }
+}

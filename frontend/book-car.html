@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Book a Car | Sampada Tours & Travels</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo">
+    <a href="index.html">Sampada Tours & Travels</a>
+  </div>
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="tours.html">Tours</a>
+    <a href="car-rentals.html" class="active">Car Rentals</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="auth-links" id="authLinks">
+    <a href="login.html" class="btn-secondary" id="loginBtn">Login</a>
+    <a href="register.html" class="btn-primary" id="signupBtn">Sign Up</a>
+  </div>
+</header>
+
+<main class="container section">
+  <h1>Book a Car</h1>
+
+  <!-- Alert Box -->
+  <div id="alertBox" class="alert-box" role="alert" style="display: none;"></div>
+
+  <form id="carBookingForm" class="booking-form" novalidate>
+
+    <fieldset>
+      <legend>Trip & Vehicle Details</legend>
+      <p class="form-instruction">Calculate your estimated cost by selecting your trip details.</p>
+
+      <div class="form-group">
+        <label for="vehicle">Vehicle Type</label>
+        <select id="vehicle" required aria-describedby="vehicleError">
+          <option value="">Select Vehicle</option>
+          <option value="Sedan" data-local="12" data-outstation="13" data-driver="300">Sedan (Swift Dzire)</option>
+          <option value="SUV" data-local="15" data-outstation="16" data-driver="350">SUV (Innova)</option>
+          <option value="Tempo" data-local="20" data-outstation="22" data-driver="400">Tempo Traveller</option>
+        </select>
+        <span id="vehicleError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="tripType">Trip Type</label>
+        <select id="tripType" required aria-describedby="tripTypeError">
+          <option value="">Select Trip Type</option>
+          <option value="Local">Local</option>
+          <option value="Outstation">Outstation</option>
+        </select>
+        <span id="tripTypeError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="kms">Distance (KM)</label>
+        <input type="number" id="kms" min="1" placeholder="Enter distance" required aria-describedby="kmsError">
+        <span id="kmsError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="days">Number of Days</label>
+        <input type="number" id="days" min="1" value="1" required aria-describedby="daysError">
+        <span id="daysError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group">
+        <input type="checkbox" id="noDriver">
+        <label for="noDriver">No Driver Required</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Cost Summary</legend>
+
+      <div class="form-group">
+        <label for="pricePerKm">Price per KM (₹)</label>
+        <input type="number" id="pricePerKm" value="0" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="driverPerDay">Driver Allowance / Day (₹)</label>
+        <input type="number" id="driverPerDay" value="0" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="driverTotal">Total Driver Allowance (₹)</label>
+        <input type="number" id="driverTotal" value="0" readonly>
+      </div>
+
+      <div class="form-group total-amount-group">
+        <label for="totalAmount">Total Estimated Amount (₹)</label>
+        <input type="number" id="totalAmount" value="0" readonly>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Your Contact Information</legend>
+
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" placeholder="Your full name" required autocomplete="name" aria-describedby="fullNameError">
+        <span id="fullNameError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" placeholder="9876543210" required autocomplete="tel" aria-describedby="phoneError" pattern="[0-9]{10}">
+        <span id="phoneError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email" aria-describedby="emailError">
+        <span id="emailError" class="error-message" style="display: none;"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="startDate">Travel Start Date</label>
+        <input type="date" id="startDate" required aria-describedby="startDateError">
+        <span id="startDateError" class="error-message" style="display: none;"></span>
+      </div>
+    </fieldset>
+
+    <button type="submit" class="btn-submit" id="submitBtn">
+      <i class="fas fa-check-circle"></i> Confirm Booking
+    </button>
+
+  </form>
+</main>
+
+<footer class="main-footer">
+  <div class="footer-content">
+    <p>Sampada Tours & Travels</p>
+    <p class="address"><i class="fas fa-map-marker-alt"></i> Kirana Bazar Road, Mominpura, Kalaburagi, Karnataka</p>
+    <p class="copyright">© 2025 Sampada Tours & Travels</p>
+  </div>
+</footer>
+
+<script>
+/* ===========================
+   AUTHENTICATION STATE MANAGEMENT
+=========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const isAuthenticated = sessionStorage.getItem("isAuthenticated");
+  const username = sessionStorage.getItem("username");
+
+  const loginBtn = document.getElementById("loginBtn");
+  const signupBtn = document.getElementById("signupBtn");
+  const authLinks = document.getElementById("authLinks");
+
+  if (isAuthenticated === "true" && username) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (signupBtn) signupBtn.style.display = "none";
+
+    if (authLinks) {
+      authLinks.innerHTML = `
+        <span style="font-weight:600; margin-right:10px;">
+          <i class="fas fa-user-circle"></i> Hi, ${username}
+        </span>
+        <button id="logoutBtn" class="btn-secondary">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      `;
+
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", async () => {
+          try {
+            await fetch("http://localhost:3000/logout", {
+              method: "POST",
+              credentials: 'include'
+            });
+          } catch (err) {
+            console.error("Logout error:", err);
+          }
+
+          sessionStorage.removeItem("isAuthenticated");
+          sessionStorage.removeItem("username");
+          
+          const tempMessage = document.createElement('div');
+          tempMessage.textContent = 'You have been logged out successfully.';
+          tempMessage.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:15px 20px;border-radius:5px;z-index:9999;';
+          document.body.appendChild(tempMessage);
+          
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1000);
+        });
+      }
+    }
+  }
+});
+
+/* ===========================
+   UTILITY FUNCTIONS
+=========================== */
+function showAlert(message, type = 'error') {
+  const alertBox = document.getElementById('alertBox');
+  alertBox.textContent = message;
+  alertBox.className = `alert-box ${type}`;
+  alertBox.style.display = 'block';
+  
+  setTimeout(() => {
+    alertBox.style.display = 'none';
+  }, 5000);
+}
+
+function showFieldError(fieldId, message) {
+  const field = document.getElementById(fieldId);
+  const errorSpan = document.getElementById(`${fieldId}Error`);
+  
+  if (field && errorSpan) {
+    field.closest('.form-group').classList.add('error');
+    errorSpan.textContent = message;
+    errorSpan.style.display = 'block';
+  }
+}
+
+function clearFieldError(fieldId) {
+  const field = document.getElementById(fieldId);
+  const errorSpan = document.getElementById(`${fieldId}Error`);
+  
+  if (field && errorSpan) {
+    field.closest('.form-group').classList.remove('error');
+    errorSpan.textContent = '';
+    errorSpan.style.display = 'none';
+  }
+}
+
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+function validatePhone(phone) {
+  const re = /^[0-9]{10}$/;
+  return re.test(phone);
+}
+
+function setLoadingState(isLoading) {
+  const submitBtn = document.getElementById('submitBtn');
+  
+  if (isLoading) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+  } else {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Booking';
+  }
+}
+
+/* ===========================
+   PRICE CALCULATION
+=========================== */
+function calculatePrice() {
+  const vehicleSelect = document.getElementById("vehicle");
+  const tripType = document.getElementById("tripType").value;
+  const kms = parseFloat(document.getElementById("kms").value) || 0;
+  const days = parseInt(document.getElementById("days").value) || 1;
+  const noDriver = document.getElementById("noDriver").checked;
+
+  const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
+
+  if (!selectedOption.value || !tripType) {
+    return;
+  }
+
+  const localRate = parseFloat(selectedOption.dataset.local) || 0;
+  const outstationRate = parseFloat(selectedOption.dataset.outstation) || 0;
+  const driverAllowancePerDay = parseFloat(selectedOption.dataset.driver) || 0;
+
+  const pricePerKm = tripType === "Local" ? localRate : outstationRate;
+  const driverTotal = noDriver ? 0 : driverAllowancePerDay * days;
+  const totalAmount = (kms * pricePerKm) + driverTotal;
+
+  document.getElementById("pricePerKm").value = pricePerKm;
+  document.getElementById("driverPerDay").value = noDriver ? 0 : driverAllowancePerDay;
+  document.getElementById("driverTotal").value = driverTotal;
+  document.getElementById("totalAmount").value = totalAmount.toFixed(2);
+}
+
+// Add event listeners for price calculation
+document.getElementById("vehicle").addEventListener("change", calculatePrice);
+document.getElementById("tripType").addEventListener("change", calculatePrice);
+document.getElementById("kms").addEventListener("input", calculatePrice);
+document.getElementById("days").addEventListener("input", calculatePrice);
+document.getElementById("noDriver").addEventListener("change", calculatePrice);
+
+/* ===========================
+   FORM SUBMISSION
+=========================== */
+document.getElementById("carBookingForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  // Clear previous errors
+  ['vehicle', 'tripType', 'kms', 'days', 'fullName', 'phone', 'email', 'startDate'].forEach(clearFieldError);
+  document.getElementById('alertBox').style.display = 'none';
+
+  // Get form values
+  const vehicle = document.getElementById("vehicle").value;
+  const tripType = document.getElementById("tripType").value;
+  const kms = document.getElementById("kms").value;
+  const days = document.getElementById("days").value;
+  const fullName = document.getElementById("fullName").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const startDate = document.getElementById("startDate").value;
+  const totalAmount = document.getElementById("totalAmount").value;
+  const noDriver = document.getElementById("noDriver").checked;
+
+  // Validation
+  let isValid = true;
+
+  if (!vehicle) {
+    showFieldError('vehicle', 'Please select a vehicle type');
+    isValid = false;
+  }
+
+  if (!tripType) {
+    showFieldError('tripType', 'Please select trip type');
+    isValid = false;
+  }
+
+  if (!kms || kms < 1) {
+    showFieldError('kms', 'Please enter valid distance (minimum 1 km)');
+    isValid = false;
+  }
+
+  if (!days || days < 1) {
+    showFieldError('days', 'Please enter valid number of days');
+    isValid = false;
+  }
+
+  if (!fullName) {
+    showFieldError('fullName', 'Full name is required');
+    isValid = false;
+  }
+
+  if (!phone) {
+    showFieldError('phone', 'Phone number is required');
+    isValid = false;
+  } else if (!validatePhone(phone)) {
+    showFieldError('phone', 'Please enter a valid 10-digit phone number');
+    isValid = false;
+  }
+
+  if (email && !validateEmail(email)) {
+    showFieldError('email', 'Please enter a valid email address');
+    isValid = false;
+  }
+
+  if (!startDate) {
+    showFieldError('startDate', 'Travel start date is required');
+    isValid = false;
+  } else {
+    const selectedDate = new Date(startDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+      showFieldError('startDate', 'Start date cannot be in the past');
+      isValid = false;
+    }
+  }
+
+  if (!isValid) {
+    showAlert('Please fix the errors in the form');
+    return;
+  }
+
+  setLoadingState(true);
+
+  const bookingData = {
+    vehicle,
+    tripType,
+    kms: parseFloat(kms),
+    days: parseInt(days),
+    noDriver,
+    fullName,
+    phone,
+    email,
+    startDate,
+    totalAmount: parseFloat(totalAmount)
+  };
+
+  try {
+    const res = await fetch("http://localhost:3000/book-car", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include',
+      body: JSON.stringify(bookingData)
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      showAlert('Car booking confirmed! We will contact you shortly.', 'success');
+      
+      // Reset form after successful booking
+      setTimeout(() => {
+        document.getElementById("carBookingForm").reset();
+        calculatePrice();
+        window.location.href = "index.html";
+      }, 2000);
+    } else {
+      showAlert(result.message || "Booking failed. Please try again.");
+      setLoadingState(false);
+    }
+  } catch (err) {
+    console.error("Booking Error:", err);
+    showAlert("Server not responding. Please try again later.");
+    setLoadingState(false);
+  }
+});
+
+/* ===========================
+   CLEAR ERRORS ON INPUT
+=========================== */
+['vehicle', 'tripType', 'kms', 'days', 'fullName', 'phone', 'email', 'startDate'].forEach(fieldId => {
+  const field = document.getElementById(fieldId);
+  if (field) {
+    field.addEventListener('input', () => clearFieldError(fieldId));
+    field.addEventListener('change', () => clearFieldError(fieldId));
+  }
+});
+
+// Set minimum date to today
+const today = new Date().toISOString().split('T')[0];
+document.getElementById("startDate").setAttribute("min", today);
+</script>
+
+</body>
+</html>
