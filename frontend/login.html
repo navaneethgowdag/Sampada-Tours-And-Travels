@@ -4,6 +4,7 @@
   <title>Login | Sampada Tours & Travels</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -12,15 +13,24 @@
     .error-message.show { display:block; }
     .form-group.error input { border-color:#dc3545; }
     .btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
+
     .loading-spinner {
       display:inline-block; width:14px; height:14px;
       border:2px solid #fff; border-radius:50%;
-      border-top-color:transparent; animation:spin 0.6s linear infinite;
+      border-top-color:transparent;
+      animation:spin 0.6s linear infinite;
       margin-left:8px;
     }
     @keyframes spin { to { transform:rotate(360deg); } }
+
     .password-toggle { cursor:pointer; user-select:none; padding:0 8px; }
-    .alert-box { padding:12px 16px; margin-bottom:20px; border-radius:4px; display:none; }
+
+    .alert-box {
+      padding:12px 16px;
+      margin-bottom:20px;
+      border-radius:4px;
+      display:none;
+    }
     .alert-box.show { display:block; }
     .alert-box.error { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
     .alert-box.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
@@ -38,7 +48,9 @@
     <a href="car-rentals.html">Car Rentals</a>
     <a href="contact.html">Contact</a>
   </nav>
-  <div class="auth-links" id="authLinks"></div>
+  <div class="auth-links" id="authLinks">
+    <!-- Updated by auth.js -->
+  </div>
 </header>
 
 <main class="auth-container">
@@ -65,7 +77,9 @@
         <div class="input-wrapper password-wrapper">
           <i class="fas fa-key icon"></i>
           <input type="password" id="password" placeholder="Enter your password" required>
-          <span class="password-toggle" id="toggleLoginPassword"><i class="fas fa-eye"></i></span>
+          <span class="password-toggle" id="toggleLoginPassword">
+            <i class="fas fa-eye"></i>
+          </span>
         </div>
         <span id="passwordError" class="error-message"></span>
       </div>
@@ -86,12 +100,14 @@
 <footer class="main-footer">
   <div class="footer-content">
     <p>Sampada Tours & Travels</p>
-    <p class="address"><i class="fas fa-map-marker-alt"></i> Kirana Bazar Road, Mominpura, Kalaburagi, Karnataka</p>
+    <p class="address">
+      <i class="fas fa-map-marker-alt"></i> Kirana Bazar Road, Mominpura, Kalaburagi, Karnataka
+    </p>
     <p class="copyright">© 2025 Sampada Tours & Travels</p>
   </div>
 </footer>
 
-<!-- Central Auth Script -->
+<!-- ✅ Central Auth Script -->
 <script src="auth.js"></script>
 
 <script>
@@ -178,15 +194,13 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
       body: JSON.stringify({ email, password })
     });
 
-    // Save login state (as per auth.js standard)
-    if (result.token) {
+    // ✅ Store token and username correctly
+    if (result.token && result.user) {
       localStorage.setItem('authToken', result.token);
-    }
-    if (result.name) {
-      localStorage.setItem('username', result.name);
+      localStorage.setItem('username', result.user.name);
     }
 
-    AUTH.showMessage(`Welcome back, ${result.name || 'User'}!`, 'success');
+    AUTH.showMessage(`Welcome back, ${result.user.name}!`, 'success');
 
     setTimeout(() => {
       window.location.href = "index.html";

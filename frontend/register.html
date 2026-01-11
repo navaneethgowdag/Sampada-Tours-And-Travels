@@ -24,7 +24,6 @@
 </header>
 
 <main class="auth-container">
-
   <div class="auth-box">
 
     <h2><i class="fas fa-user-plus"></i> Create Your Account</h2>
@@ -40,7 +39,7 @@
           <i class="fas fa-user icon"></i>
           <input type="text" id="fullName" placeholder="Your full name" required>
         </div>
-        <span id="fullNameError" class="error-message" style="display:none;"></span>
+        <span id="fullNameError" class="error-message"></span>
       </div>
 
       <div class="form-group icon-input">
@@ -49,7 +48,7 @@
           <i class="fas fa-phone icon"></i>
           <input type="tel" id="phone" placeholder="9876543210" required maxlength="10">
         </div>
-        <span id="phoneError" class="error-message" style="display:none;"></span>
+        <span id="phoneError" class="error-message"></span>
       </div>
 
       <div class="form-group icon-input">
@@ -58,7 +57,7 @@
           <i class="fas fa-envelope icon"></i>
           <input type="email" id="email" placeholder="your@email.com" required>
         </div>
-        <span id="emailError" class="error-message" style="display:none;"></span>
+        <span id="emailError" class="error-message"></span>
       </div>
 
       <div class="form-group icon-input">
@@ -66,9 +65,8 @@
         <div class="input-wrapper password-wrapper">
           <i class="fas fa-key icon"></i>
           <input type="password" id="password" placeholder="Create a strong password" required>
-          <span class="password-toggle" id="togglePassword"><i class="fas fa-eye"></i></span>
         </div>
-        <span id="passwordError" class="error-message" style="display:none;"></span>
+        <span id="passwordError" class="error-message"></span>
       </div>
 
       <div class="form-group icon-input">
@@ -76,9 +74,8 @@
         <div class="input-wrapper password-wrapper">
           <i class="fas fa-lock icon"></i>
           <input type="password" id="confirmPassword" placeholder="Re-enter password" required>
-          <span class="password-toggle" id="toggleConfirmPassword"><i class="fas fa-eye"></i></span>
         </div>
-        <span id="confirmPasswordError" class="error-message" style="display:none;"></span>
+        <span id="confirmPasswordError" class="error-message"></span>
       </div>
 
       <button type="submit" class="btn-submit auth-submit-btn" id="submitBtn">
@@ -154,19 +151,19 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
   ['fullName','phone','email','password','confirmPassword'].forEach(clearFieldError);
   document.getElementById('alertBox').style.display = 'none';
 
-  const name = fullName.value.trim();
-  const phone = phone.value.trim();
-  const email = email.value.trim();
-  const password = password.value;
-  const confirmPassword = confirmPassword.value;
+  const name = document.getElementById("fullName").value.trim();
+  const phoneVal = document.getElementById("phone").value.trim();
+  const emailVal = document.getElementById("email").value.trim();
+  const passwordVal = document.getElementById("password").value;
+  const confirmPasswordVal = document.getElementById("confirmPassword").value;
 
   let valid = true;
 
   if (!name) { showFieldError('fullName','Name required'); valid=false; }
-  if (!validatePhone(phone)) { showFieldError('phone','Enter valid phone'); valid=false; }
-  if (!validateEmail(email)) { showFieldError('email','Enter valid email'); valid=false; }
-  if (password.length < 8) { showFieldError('password','Minimum 8 characters'); valid=false; }
-  if (password !== confirmPassword) { showFieldError('confirmPassword','Passwords do not match'); valid=false; }
+  if (!validatePhone(phoneVal)) { showFieldError('phone','Enter valid 10-digit phone'); valid=false; }
+  if (!validateEmail(emailVal)) { showFieldError('email','Enter valid email'); valid=false; }
+  if (passwordVal.length < 8) { showFieldError('password','Minimum 8 characters'); valid=false; }
+  if (passwordVal !== confirmPasswordVal) { showFieldError('confirmPassword','Passwords do not match'); valid=false; }
 
   if (!valid) {
     showAlert('Please fix form errors');
@@ -176,7 +173,12 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
   try {
     const result = await AUTH.apiRequest('/register', {
       method: 'POST',
-      body: JSON.stringify({ name, phone, email, password })
+      body: JSON.stringify({ 
+        name, 
+        phone: phoneVal, 
+        email: emailVal, 
+        password: passwordVal 
+      })
     });
 
     AUTH.showMessage(result.message || "Account created successfully!", "success");
