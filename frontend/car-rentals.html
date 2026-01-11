@@ -20,8 +20,7 @@
     <a href="contact.html">Contact</a>
   </nav>
   <div class="auth-links" id="authLinks">
-    <a href="login.html" class="btn-secondary" id="loginBtn">Login</a>
-    <a href="register.html" class="btn-primary" id="signupBtn">Sign Up</a>
+    <!-- Auth UI injected by auth.js -->
   </div>
 </header>
 
@@ -192,60 +191,12 @@
   </div>
 </footer>
 
+<!-- Central Auth Script -->
+<script src="js/auth.js"></script>
 <script>
-/* ===========================
-   AUTHENTICATION STATE MANAGEMENT
-=========================== */
-document.addEventListener("DOMContentLoaded", () => {
-  const isAuthenticated = sessionStorage.getItem("isAuthenticated");
-  const username = sessionStorage.getItem("username");
-
-  const loginBtn = document.getElementById("loginBtn");
-  const signupBtn = document.getElementById("signupBtn");
-  const authLinks = document.getElementById("authLinks");
-
-  if (isAuthenticated === "true" && username) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (signupBtn) signupBtn.style.display = "none";
-
-    if (authLinks) {
-      authLinks.innerHTML = `
-        <span style="font-weight:600; margin-right:10px;">
-          <i class="fas fa-user-circle"></i> Hi, ${username}
-        </span>
-        <button id="logoutBtn" class="btn-secondary">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-      `;
-
-      const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-          try {
-            await fetch("http://localhost:3000/logout", {
-              method: "POST",
-              credentials: 'include'
-            });
-          } catch (err) {
-            console.error("Logout error:", err);
-          }
-
-          sessionStorage.removeItem("isAuthenticated");
-          sessionStorage.removeItem("username");
-          
-          const tempMessage = document.createElement('div');
-          tempMessage.textContent = 'You have been logged out successfully.';
-          tempMessage.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:15px 20px;border-radius:5px;z-index:9999;';
-          document.body.appendChild(tempMessage);
-          
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 1000);
-        });
-      }
-    }
-  }
-});
+  document.addEventListener("DOMContentLoaded", () => {
+    AUTH.updateAuthUI();
+  });
 </script>
 
 </body>

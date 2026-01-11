@@ -6,61 +6,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <style>
-    /* Additional styles for improved UX */
-    .error-message {
-      color: #dc3545;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-      display: none;
-    }
-    .error-message.show {
-      display: block;
-    }
-    .form-group.error input {
-      border-color: #dc3545;
-    }
-    .btn-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    .error-message { color:#dc3545; font-size:0.875rem; margin-top:0.25rem; display:none; }
+    .error-message.show { display:block; }
+    .form-group.error input { border-color:#dc3545; }
+    .btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
     .loading-spinner {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 0.6s linear infinite;
-      margin-left: 8px;
+      display:inline-block; width:14px; height:14px;
+      border:2px solid #fff; border-radius:50%;
+      border-top-color:transparent; animation:spin 0.6s linear infinite;
+      margin-left:8px;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    .password-toggle {
-      cursor: pointer;
-      user-select: none;
-      padding: 0 8px;
-    }
-    .alert-box {
-      padding: 12px 16px;
-      margin-bottom: 20px;
-      border-radius: 4px;
-      display: none;
-    }
-    .alert-box.show {
-      display: block;
-    }
-    .alert-box.error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    .alert-box.success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .password-toggle { cursor:pointer; user-select:none; padding:0 8px; }
+    .alert-box { padding:12px 16px; margin-bottom:20px; border-radius:4px; display:none; }
+    .alert-box.show { display:block; }
+    .alert-box.error { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
+    .alert-box.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
   </style>
 </head>
 <body>
@@ -75,20 +38,15 @@
     <a href="car-rentals.html">Car Rentals</a>
     <a href="contact.html">Contact</a>
   </nav>
-  <div class="auth-links">
-    <a href="login.html" class="btn-secondary active-auth">Login</a>
-    <a href="register.html" class="btn-primary">Sign Up</a>
-  </div>
+  <div class="auth-links" id="authLinks"></div>
 </header>
 
 <main class="auth-container">
-
   <div class="auth-box">
 
     <h2><i class="fas fa-lock"></i> User Login</h2>
     <p class="auth-message">Access your bookings and saved itineraries.</p>
 
-    <!-- Alert Box -->
     <div id="alertBox" class="alert-box" role="alert"></div>
 
     <form id="loginForm" class="auth-form" novalidate>
@@ -96,15 +54,8 @@
       <div class="form-group icon-input">
         <label for="email">Email</label>
         <div class="input-wrapper">
-          <i class="fas fa-envelope icon" aria-hidden="true"></i>
-          <input 
-            type="email" 
-            id="email" 
-            name="email"
-            placeholder="your@email.com" 
-            required
-            autocomplete="email"
-            aria-describedby="emailError">
+          <i class="fas fa-envelope icon"></i>
+          <input type="email" id="email" placeholder="your@email.com" required>
         </div>
         <span id="emailError" class="error-message"></span>
       </div>
@@ -112,23 +63,9 @@
       <div class="form-group icon-input">
         <label for="password">Password</label>
         <div class="input-wrapper password-wrapper">
-          <i class="fas fa-key icon" aria-hidden="true"></i>
-          <input 
-            type="password" 
-            id="password" 
-            name="password"
-            placeholder="Enter your password"
-            required
-            autocomplete="current-password"
-            aria-describedby="passwordError">
-          <span 
-            class="password-toggle" 
-            id="toggleLoginPassword"
-            role="button"
-            tabindex="0"
-            aria-label="Toggle password visibility">
-            <i class="fas fa-eye"></i>
-          </span>
+          <i class="fas fa-key icon"></i>
+          <input type="password" id="password" placeholder="Enter your password" required>
+          <span class="password-toggle" id="toggleLoginPassword"><i class="fas fa-eye"></i></span>
         </div>
         <span id="passwordError" class="error-message"></span>
       </div>
@@ -154,25 +91,27 @@
   </div>
 </footer>
 
+<!-- Central Auth Script -->
+<script src="js/auth.js"></script>
+
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+  AUTH.updateAuthUI();
+});
+
 /* ===========================
-   UTILITY FUNCTIONS
+   HELPERS
 =========================== */
 function showAlert(message, type = 'error') {
   const alertBox = document.getElementById('alertBox');
   alertBox.textContent = message;
   alertBox.className = `alert-box ${type} show`;
-  
-  // Auto-hide after 5 seconds
-  setTimeout(() => {
-    alertBox.classList.remove('show');
-  }, 5000);
+  setTimeout(() => alertBox.classList.remove('show'), 5000);
 }
 
 function showFieldError(fieldId, message) {
   const field = document.getElementById(fieldId);
   const errorSpan = document.getElementById(`${fieldId}Error`);
-  
   field.closest('.form-group').classList.add('error');
   errorSpan.textContent = message;
   errorSpan.classList.add('show');
@@ -181,25 +120,20 @@ function showFieldError(fieldId, message) {
 function clearFieldError(fieldId) {
   const field = document.getElementById(fieldId);
   const errorSpan = document.getElementById(`${fieldId}Error`);
-  
   field.closest('.form-group').classList.remove('error');
   errorSpan.textContent = '';
   errorSpan.classList.remove('show');
 }
 
 function validateEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function setLoadingState(isLoading) {
   const submitBtn = document.getElementById('submitBtn');
-  const icon = submitBtn.querySelector('i');
-  
   if (isLoading) {
     submitBtn.disabled = true;
-    icon.style.display = 'none';
-    submitBtn.innerHTML += '<span class="loading-spinner"></span>';
+    submitBtn.innerHTML = 'Logging in <span class="loading-spinner"></span>';
   } else {
     submitBtn.disabled = false;
     submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log In';
@@ -212,7 +146,6 @@ function setLoadingState(isLoading) {
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // Clear previous errors
   clearFieldError('email');
   clearFieldError('password');
   document.getElementById('alertBox').classList.remove('show');
@@ -220,22 +153,18 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  // Validation
   let isValid = true;
 
   if (!email) {
     showFieldError('email', 'Email is required');
     isValid = false;
   } else if (!validateEmail(email)) {
-    showFieldError('email', 'Please enter a valid email address');
+    showFieldError('email', 'Enter a valid email');
     isValid = false;
   }
 
   if (!password) {
     showFieldError('password', 'Password is required');
-    isValid = false;
-  } else if (password.length < 6) {
-    showFieldError('password', 'Password must be at least 6 characters');
     isValid = false;
   }
 
@@ -244,33 +173,28 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   setLoadingState(true);
 
   try {
-      const res = await fetch("https://sampada-tours-and-travels-ood6.onrender.com/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-      credentials: 'include' // Important for cookies
+    const result = await AUTH.apiRequest('/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
     });
 
-    const result = await res.json();
-
-    if (res.ok) {
-      // Store only non-sensitive data in sessionStorage
-      sessionStorage.setItem("username", result.name);
-      sessionStorage.setItem("isAuthenticated", "true");
-      
-      showAlert(`Welcome back, ${result.name || 'User'}!`, 'success');
-      
-      // Redirect after short delay to show success message
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 1000);
-    } else {
-      showAlert(result.message || "Login failed. Please check your credentials.");
-      setLoadingState(false);
+    // Save login state (as per auth.js standard)
+    if (result.token) {
+      localStorage.setItem('authToken', result.token);
     }
+    if (result.name) {
+      localStorage.setItem('username', result.name);
+    }
+
+    AUTH.showMessage(`Welcome back, ${result.name || 'User'}!`, 'success');
+
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 1000);
+
   } catch (err) {
-    console.error("Login Server Error:", err);
-    showAlert("Server not responding. Please try again later.");
+    console.error("Login Error:", err);
+    AUTH.showMessage(err.message || "Login failed. Please check your credentials.", "error");
     setLoadingState(false);
   }
 });
@@ -282,10 +206,7 @@ const toggleLoginPassword = document.getElementById("toggleLoginPassword");
 const loginPasswordInput = document.getElementById("password");
 
 if (toggleLoginPassword) {
-  // Mouse click
   toggleLoginPassword.addEventListener("click", togglePassword);
-  
-  // Keyboard support
   toggleLoginPassword.addEventListener("keypress", (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -295,28 +216,17 @@ if (toggleLoginPassword) {
 }
 
 function togglePassword() {
-  const type = loginPasswordInput.getAttribute("type") === "password" ? "text" : "password";
-  loginPasswordInput.setAttribute("type", type);
-  
+  const type = loginPasswordInput.type === "password" ? "text" : "password";
+  loginPasswordInput.type = type;
   const icon = toggleLoginPassword.querySelector('i');
   icon.className = type === "password" ? "fas fa-eye" : "fas fa-eye-slash";
-  
-  toggleLoginPassword.setAttribute(
-    "aria-label", 
-    type === "password" ? "Show password" : "Hide password"
-  );
 }
 
 /* ===========================
    CLEAR ERRORS ON INPUT
 =========================== */
-document.getElementById('email').addEventListener('input', () => {
-  clearFieldError('email');
-});
-
-document.getElementById('password').addEventListener('input', () => {
-  clearFieldError('password');
-});
+document.getElementById('email').addEventListener('input', () => clearFieldError('email'));
+document.getElementById('password').addEventListener('input', () => clearFieldError('password'));
 </script>
 
 </body>

@@ -74,6 +74,30 @@ function getCurrentUser() {
   };
 }
 
+// Helper for authenticated API requests
+async function apiRequest(endpoint, options = {}) {
+  const token = localStorage.getItem('authToken');
+
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {}),
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  };
+
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || 'API request failed');
+  }
+
+  return response.json();
+}
+
+
 // Export for use in other scripts
 window.AUTH = {
   API_URL,
@@ -81,5 +105,6 @@ window.AUTH = {
   getCurrentUser,
   logout,
   showMessage,
-  updateAuthUI
-};``
+  updateAuthUI,
+  apiRequest
+};

@@ -20,10 +20,7 @@
     <a href="car-rentals.html">Car Rentals</a>
     <a href="contact.html">Contact</a>
   </nav>
-  <div class="auth-links">
-    <a href="login.html" class="btn-secondary">Login</a>
-    <a href="register.html" class="btn-primary active-auth">Sign Up</a>
-  </div>
+  <div class="auth-links" id="authLinks"></div>
 </header>
 
 <main class="auth-container">
@@ -33,7 +30,6 @@
     <h2><i class="fas fa-user-plus"></i> Create Your Account</h2>
     <p class="auth-message">Join Sampada Tours & Travels for exclusive benefits!</p>
 
-    <!-- Alert Box -->
     <div id="alertBox" class="alert-box" role="alert" style="display: none;"></div>
 
     <form id="registerForm" class="auth-form" novalidate>
@@ -41,105 +37,48 @@
       <div class="form-group icon-input">
         <label for="fullName">Full Name</label>
         <div class="input-wrapper">
-          <i class="fas fa-user icon" aria-hidden="true"></i>
-          <input 
-            type="text" 
-            id="fullName" 
-            name="fullName"
-            placeholder="Your full name" 
-            required
-            autocomplete="name"
-            aria-describedby="fullNameError">
+          <i class="fas fa-user icon"></i>
+          <input type="text" id="fullName" placeholder="Your full name" required>
         </div>
-        <span id="fullNameError" class="error-message" style="display: none;"></span>
+        <span id="fullNameError" class="error-message" style="display:none;"></span>
       </div>
 
       <div class="form-group icon-input">
         <label for="phone">Phone Number</label>
         <div class="input-wrapper">
-          <i class="fas fa-phone icon" aria-hidden="true"></i>
-          <input 
-            type="tel" 
-            id="phone" 
-            name="phone"
-            placeholder="9876543210" 
-            required
-            autocomplete="tel"
-            pattern="[0-9]{10}"
-            maxlength="10"
-            aria-describedby="phoneError">
+          <i class="fas fa-phone icon"></i>
+          <input type="tel" id="phone" placeholder="9876543210" required maxlength="10">
         </div>
-        <span id="phoneError" class="error-message" style="display: none;"></span>
+        <span id="phoneError" class="error-message" style="display:none;"></span>
       </div>
 
       <div class="form-group icon-input">
         <label for="email">Email</label>
         <div class="input-wrapper">
-          <i class="fas fa-envelope icon" aria-hidden="true"></i>
-          <input 
-            type="email" 
-            id="email" 
-            name="email"
-            placeholder="your@email.com" 
-            required
-            autocomplete="email"
-            aria-describedby="emailError">
+          <i class="fas fa-envelope icon"></i>
+          <input type="email" id="email" placeholder="your@email.com" required>
         </div>
-        <span id="emailError" class="error-message" style="display: none;"></span>
+        <span id="emailError" class="error-message" style="display:none;"></span>
       </div>
 
       <div class="form-group icon-input">
         <label for="password">Password</label>
         <div class="input-wrapper password-wrapper">
-          <i class="fas fa-key icon" aria-hidden="true"></i>
-          <input 
-            type="password" 
-            id="password" 
-            name="password"
-            placeholder="Create a strong password"
-            required
-            autocomplete="new-password"
-            aria-describedby="passwordError passwordText">
-          <span 
-            class="password-toggle" 
-            id="togglePassword"
-            role="button"
-            tabindex="0"
-            aria-label="Toggle password visibility">
-            <i class="fas fa-eye"></i>
-          </span>
+          <i class="fas fa-key icon"></i>
+          <input type="password" id="password" placeholder="Create a strong password" required>
+          <span class="password-toggle" id="togglePassword"><i class="fas fa-eye"></i></span>
         </div>
-        <span id="passwordError" class="error-message" style="display: none;"></span>
-
-        <!-- Strength Meter -->
-        <div class="password-meter" id="passwordMeter">
-          <span></span>
-        </div>
-        <div class="password-text" id="passwordText">Must be 8+ characters with uppercase, lowercase, and number</div>
+        <span id="passwordError" class="error-message" style="display:none;"></span>
       </div>
 
       <div class="form-group icon-input">
         <label for="confirmPassword">Confirm Password</label>
         <div class="input-wrapper password-wrapper">
-          <i class="fas fa-lock icon" aria-hidden="true"></i>
-          <input 
-            type="password" 
-            id="confirmPassword" 
-            name="confirmPassword"
-            placeholder="Re-enter password" 
-            required
-            autocomplete="new-password"
-            aria-describedby="confirmPasswordError">
-          <span 
-            class="password-toggle" 
-            id="toggleConfirmPassword"
-            role="button"
-            tabindex="0"
-            aria-label="Toggle confirm password visibility">
-            <i class="fas fa-eye"></i>
-          </span>
+          <i class="fas fa-lock icon"></i>
+          <input type="password" id="confirmPassword" placeholder="Re-enter password" required>
+          <span class="password-toggle" id="toggleConfirmPassword"><i class="fas fa-eye"></i></span>
         </div>
-        <span id="confirmPasswordError" class="error-message" style="display: none;"></span>
+        <span id="confirmPasswordError" class="error-message" style="display:none;"></span>
       </div>
 
       <button type="submit" class="btn-submit auth-submit-btn" id="submitBtn">
@@ -163,207 +102,47 @@
   </div>
 </footer>
 
+<!-- Central Auth -->
+<script src="js/auth.js"></script>
+
 <script>
-/* ===========================
-   CONFIGURATION
-=========================== */
-const API_URL = 'https://sampada-tours-and-travels-ood6.onrender.com';
-
+document.addEventListener("DOMContentLoaded", () => {
+  AUTH.updateAuthUI();
+});
 
 /* ===========================
-   UTILITY FUNCTIONS
+   HELPERS
 =========================== */
 function showAlert(message, type = 'error') {
   const alertBox = document.getElementById('alertBox');
   alertBox.textContent = message;
   alertBox.className = `alert-box ${type}`;
   alertBox.style.display = 'block';
-  
-  // Auto-hide after 5 seconds
-  setTimeout(() => {
-    alertBox.style.display = 'none';
-  }, 5000);
-  
-  // Scroll to alert
-  alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  setTimeout(() => alertBox.style.display = 'none', 5000);
 }
 
 function showFieldError(fieldId, message) {
   const field = document.getElementById(fieldId);
   const errorSpan = document.getElementById(`${fieldId}Error`);
-  
-  if (field && errorSpan) {
-    field.closest('.form-group').classList.add('error');
-    errorSpan.textContent = message;
-    errorSpan.style.display = 'block';
-    field.setAttribute('aria-invalid', 'true');
-  }
+  field.closest('.form-group').classList.add('error');
+  errorSpan.textContent = message;
+  errorSpan.style.display = 'block';
 }
 
 function clearFieldError(fieldId) {
   const field = document.getElementById(fieldId);
   const errorSpan = document.getElementById(`${fieldId}Error`);
-  
-  if (field && errorSpan) {
-    field.closest('.form-group').classList.remove('error');
-    errorSpan.textContent = '';
-    errorSpan.style.display = 'none';
-    field.removeAttribute('aria-invalid');
-  }
+  field.closest('.form-group').classList.remove('error');
+  errorSpan.textContent = '';
+  errorSpan.style.display = 'none';
 }
 
 function validateEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email.toLowerCase());
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.toLowerCase());
 }
 
 function validatePhone(phone) {
-  const re = /^[0-9]{10}$/;
-  return re.test(phone);
-}
-
-function validatePassword(password) {
-  const errors = [];
-  
-  if (password.length < 8) {
-    errors.push('at least 8 characters');
-  }
-  if (!/[A-Z]/.test(password)) {
-    errors.push('one uppercase letter');
-  }
-  if (!/[a-z]/.test(password)) {
-    errors.push('one lowercase letter');
-  }
-  if (!/[0-9]/.test(password)) {
-    errors.push('one number');
-  }
-  
-  return {
-    valid: errors.length === 0,
-    message: errors.length > 0 ? `Password must contain ${errors.join(', ')}` : ''
-  };
-}
-
-function setLoadingState(isLoading) {
-  const submitBtn = document.getElementById('submitBtn');
-  const formInputs = document.querySelectorAll('#registerForm input, #registerForm button');
-  
-  if (isLoading) {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
-    formInputs.forEach(input => input.disabled = true);
-  } else {
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = '<i class="fas fa-user-check"></i> Sign Up';
-    formInputs.forEach(input => input.disabled = false);
-  }
-}
-
-/* ===========================
-   PASSWORD STRENGTH METER
-=========================== */
-const passwordInput = document.getElementById("password");
-const meter = document.getElementById("passwordMeter");
-const meterBar = meter?.querySelector("span");
-const strengthText = document.getElementById("passwordText");
-
-if (passwordInput && meter && meterBar && strengthText) {
-  passwordInput.addEventListener("input", () => {
-    const val = passwordInput.value;
-    
-    if (val.length === 0) {
-      meter.className = "password-meter";
-      meterBar.style.width = "0%";
-      strengthText.textContent = "Must be 8+ characters with uppercase, lowercase, and number";
-      strengthText.style.color = "var(--text-muted)";
-      return;
-    }
-
-    let strength = 0;
-    const criteria = {
-      length: val.length >= 8,
-      longLength: val.length >= 12,
-      uppercase: /[A-Z]/.test(val),
-      lowercase: /[a-z]/.test(val),
-      number: /[0-9]/.test(val),
-      special: /[^A-Za-z0-9]/.test(val)
-    };
-
-    // Calculate strength
-    if (criteria.length) strength++;
-    if (criteria.longLength) strength++;
-    if (criteria.uppercase) strength++;
-    if (criteria.lowercase) strength++;
-    if (criteria.number) strength++;
-    if (criteria.special) strength++;
-
-    meter.className = "password-meter";
-
-    if (strength <= 2) {
-      meter.classList.add("password-weak");
-      meterBar.style.width = "33%";
-      strengthText.textContent = "Weak - add more characters and variety";
-      strengthText.style.color = "#ef4444";
-    } 
-    else if (strength <= 4) {
-      meter.classList.add("password-medium");
-      meterBar.style.width = "66%";
-      strengthText.textContent = "Medium - add special characters for better security";
-      strengthText.style.color = "#f59e0b";
-    } 
-    else {
-      meter.classList.add("password-strong");
-      meterBar.style.width = "100%";
-      strengthText.textContent = "Strong password!";
-      strengthText.style.color = "#10b981";
-    }
-  });
-}
-
-/* ===========================
-   PASSWORD TOGGLE
-=========================== */
-function setupPasswordToggle(toggleId, inputId) {
-  const toggle = document.getElementById(toggleId);
-  const input = document.getElementById(inputId);
-
-  if (toggle && input) {
-    toggle.addEventListener("click", () => togglePasswordVisibility(toggle, input));
-    
-    toggle.addEventListener("keypress", (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        togglePasswordVisibility(toggle, input);
-      }
-    });
-  }
-}
-
-function togglePasswordVisibility(toggle, input) {
-  const type = input.getAttribute("type") === "password" ? "text" : "password";
-  input.setAttribute("type", type);
-  
-  const icon = toggle.querySelector('i');
-  icon.className = type === "password" ? "fas fa-eye" : "fas fa-eye-slash";
-  
-  toggle.setAttribute(
-    "aria-label", 
-    type === "password" ? "Show password" : "Hide password"
-  );
-}
-
-setupPasswordToggle("togglePassword", "password");
-setupPasswordToggle("toggleConfirmPassword", "confirmPassword");
-
-/* ===========================
-   PHONE NUMBER FORMATTING
-=========================== */
-const phoneInput = document.getElementById('phone');
-if (phoneInput) {
-  phoneInput.addEventListener('input', (e) => {
-    // Remove non-numeric characters
-    e.target.value = e.target.value.replace(/\D/g, '');
-  });
+  return /^[0-9]{10}$/.test(phone);
 }
 
 /* ===========================
@@ -372,177 +151,46 @@ if (phoneInput) {
 document.getElementById("registerForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // Clear previous errors
-  ['fullName', 'phone', 'email', 'password', 'confirmPassword'].forEach(clearFieldError);
+  ['fullName','phone','email','password','confirmPassword'].forEach(clearFieldError);
   document.getElementById('alertBox').style.display = 'none';
 
-  // Get form values
-  const name = document.getElementById("fullName").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
+  const name = fullName.value.trim();
+  const phone = phone.value.trim();
+  const email = email.value.trim();
+  const password = password.value;
+  const confirmPassword = confirmPassword.value;
 
-  // Validation
-  let isValid = true;
-  let firstErrorField = null;
+  let valid = true;
 
-  if (!name) {
-    showFieldError('fullName', 'Full name is required');
-    isValid = false;
-    if (!firstErrorField) firstErrorField = 'fullName';
-  } else if (name.length < 3) {
-    showFieldError('fullName', 'Name must be at least 3 characters');
-    isValid = false;
-    if (!firstErrorField) firstErrorField = 'fullName';
-  }
+  if (!name) { showFieldError('fullName','Name required'); valid=false; }
+  if (!validatePhone(phone)) { showFieldError('phone','Enter valid phone'); valid=false; }
+  if (!validateEmail(email)) { showFieldError('email','Enter valid email'); valid=false; }
+  if (password.length < 8) { showFieldError('password','Minimum 8 characters'); valid=false; }
+  if (password !== confirmPassword) { showFieldError('confirmPassword','Passwords do not match'); valid=false; }
 
-  if (!phone) {
-    showFieldError('phone', 'Phone number is required');
-    isValid = false;
-    if (!firstErrorField) firstErrorField = 'phone';
-  } else if (!validatePhone(phone)) {
-    showFieldError('phone', 'Please enter a valid 10-digit phone number');
-    isValid = false;
-    if (!firstErrorField) firstErrorField = 'phone';
-  }
-
-  if (!email) {
-    showFieldError('email', 'Email is required');
-    isValid = false;
-    if (!firstErrorField) firstErrorField = 'email';
-  } else if (!validateEmail(email)) {
-    showFieldError('email', 'Please enter a valid email address');
-    isValid = false;
-    if (!firstErrorField) firstErrorField = 'email';
-  }
-
-  if (!password) {
-    showFieldError('password', 'Password is required');
-    isValid = false;
-    if (!firstErrorField) firstErrorField = 'password';
-  } else {
-    const passwordCheck = validatePassword(password);
-    if (!passwordCheck.valid) {
-      showFieldError('password', passwordCheck.message);
-      isValid = false;
-      if (!firstErrorField) firstErrorField = 'password';
-    }
-  }
-
-  if (!confirmPassword) {
-    showFieldError('confirmPassword', 'Please confirm your password');
-    isValid = false;
-    if (!firstErrorField) firstErrorField = 'confirmPassword';
-  } else if (password !== confirmPassword) {
-    showFieldError('confirmPassword', 'Passwords do not match');
-    isValid = false;
-    if (!firstErrorField) firstErrorField = 'confirmPassword';
-  }
-
-  if (!isValid) {
-    showAlert('Please fix the errors in the form');
-    // Focus on first error field
-    if (firstErrorField) {
-      document.getElementById(firstErrorField).focus();
-    }
+  if (!valid) {
+    showAlert('Please fix form errors');
     return;
   }
 
-  setLoadingState(true);
-
   try {
-    const res = await fetch(`${API_URL}/register`, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json"
-      },
-      credentials: 'include',
+    const result = await AUTH.apiRequest('/register', {
+      method: 'POST',
       body: JSON.stringify({ name, phone, email, password })
     });
 
-    const result = await res.json();
+    AUTH.showMessage(result.message || "Account created successfully!", "success");
+    document.getElementById('registerForm').reset();
 
-    if (res.ok) {
-      showAlert(result.message || "Account created successfully! Redirecting to login...", 'success');
-      
-      // Clear form
-      document.getElementById('registerForm').reset();
-      
-      // Redirect after short delay
-      setTimeout(() => {
-        window.location.href = "login.html";
-      }, 2000);
-    } else {
-      // Handle specific error cases
-      if (result.message.includes('Email already registered')) {
-        showFieldError('email', 'This email is already registered');
-        showAlert('Email already exists. Please use a different email or try logging in.');
-      } else if (result.message.includes('Password')) {
-        showFieldError('password', result.message);
-        showAlert(result.message);
-      } else {
-        showAlert(result.message || "Registration failed. Please check your details and try again.");
-      }
-      setLoadingState(false);
-    }
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1500);
+
   } catch (err) {
-    console.error("Registration Error:", err);
-    showAlert("Unable to connect to server. Please check your internet connection and try again.");
-    setLoadingState(false);
+    console.error(err);
+    AUTH.showMessage(err.message || "Registration failed", "error");
   }
 });
-
-/* ===========================
-   CLEAR ERRORS ON INPUT
-=========================== */
-['fullName', 'phone', 'email', 'password', 'confirmPassword'].forEach(fieldId => {
-  const field = document.getElementById(fieldId);
-  if (field) {
-    field.addEventListener('input', () => clearFieldError(fieldId));
-    field.addEventListener('blur', () => {
-      // Optional: validate on blur
-      const value = field.value.trim();
-      if (value) {
-        switch(fieldId) {
-          case 'email':
-            if (!validateEmail(value)) {
-              showFieldError(fieldId, 'Please enter a valid email address');
-            }
-            break;
-          case 'phone':
-            if (!validatePhone(value)) {
-              showFieldError(fieldId, 'Please enter a valid 10-digit phone number');
-            }
-            break;
-        }
-      }
-    });
-  }
-});
-
-/* ===========================
-   REAL-TIME PASSWORD MATCH CHECK
-=========================== */
-const confirmPasswordInput = document.getElementById('confirmPassword');
-if (confirmPasswordInput) {
-  confirmPasswordInput.addEventListener('input', () => {
-    const password = document.getElementById('password').value;
-    const confirmPassword = confirmPasswordInput.value;
-    
-    if (confirmPassword && password !== confirmPassword) {
-      showFieldError('confirmPassword', 'Passwords do not match');
-    } else if (confirmPassword && password === confirmPassword) {
-      clearFieldError('confirmPassword');
-      // Show success indicator
-      const formGroup = confirmPasswordInput.closest('.form-group');
-      if (formGroup) {
-        formGroup.classList.add('success');
-        setTimeout(() => formGroup.classList.remove('success'), 2000);
-      }
-    }
-  });
-}
 </script>
 
 </body>

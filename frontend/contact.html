@@ -18,8 +18,7 @@
     <a href="contact.html" class="active">Contact</a>
   </nav>
   <div class="auth-links" id="authLinks">
-    <a href="login.html" class="btn-secondary">Login</a>
-    <a href="register.html" class="btn-primary">Sign Up</a>
+    <!-- Auth UI injected by auth.js -->
   </div>
 </header>
 
@@ -77,9 +76,19 @@
   </div>
 </footer>
 
-<script>
-const API = 'https://sampada-tours-and-travels-ood6.onrender.com';
+<!-- Central Auth Script -->
+<script src="js/auth.js"></script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  AUTH.updateAuthUI();
+
+  // Prefill name if user is logged in
+  const user = AUTH.getCurrentUser();
+  if (user && user.username) {
+    document.getElementById('name').value = user.username;
+  }
+});
 
 const form = document.getElementById('feedbackForm');
 const alertBox = document.getElementById('alertBox');
@@ -92,6 +101,7 @@ document.getElementById('phone').addEventListener('input', e => {
 // Submit feedback
 form.addEventListener('submit', async e => {
   e.preventDefault();
+
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
@@ -105,27 +115,18 @@ form.addEventListener('submit', async e => {
   };
 
   try {
-    const token = localStorage.getItem('authToken');
-    const res = await fetch(`${API}/feedback`, {
+    const result = await AUTH.apiRequest('/feedback', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : ''
-      },
       body: JSON.stringify(data)
     });
 
-    const result = await res.json();
+    alertBox.textContent = result.message || 'Thank you for your feedback!';
+    alertBox.className = 'alert-box success';
+    alertBox.style.display = 'block';
+    form.reset();
 
-    if (res.ok) {
-      alertBox.textContent = result.message || 'Thank you for your feedback!';
-      alertBox.className = 'alert-box success';
-      alertBox.style.display = 'block';
-      form.reset();
-    } else {
-      throw new Error(result.message);
-    }
   } catch (err) {
+    console.error(err);
     alertBox.textContent = err.message || 'Failed to submit. Please try again.';
     alertBox.className = 'alert-box error';
     alertBox.style.display = 'block';
@@ -134,20 +135,7 @@ form.addEventListener('submit', async e => {
     btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
   }
 });
-
-// Auth UI
-const token = localStorage.getItem('authToken');
-const username = localStorage.getItem('username');
-if (token && username) {
-  document.getElementById('authLinks').innerHTML = `
-    <span style="font-weight:600;margin-right:10px;">
-      <i class="fas fa-user-circle"></i> ${username}
-    </span>
-    <button onclick="localStorage.clear();location.href='index.html'" class="btn-secondary">Logout</button>
-  `;
-  // Pre-fill name if logged in
-  document.getElementById('name').value = username;
-}
 </script>
+
 </body>
 </html>

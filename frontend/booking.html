@@ -18,8 +18,7 @@
     <a href="contact.html">Contact</a>
   </nav>
   <div class="auth-links" id="authLinks">
-    <a href="login.html" class="btn-secondary">Login</a>
-    <a href="register.html" class="btn-primary">Sign Up</a>
+    <!-- Auth UI injected by auth.js -->
   </div>
 </header>
 
@@ -111,21 +110,34 @@
   </div>
 </footer>
 
-<script>
-const API = 'https://sampada-tours-and-travels-ood6.onrender.com';
+<!-- Central Auth Script -->
+<script src="js/auth.js"></script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  AUTH.updateAuthUI();
+
+  // Set min date
+  document.getElementById('travelDate').min = new Date().toISOString().split('T')[0];
+
+  // Auto-fill from URL
+  const params = new URLSearchParams(location.search);
+  if (params.get('package')) {
+    tourSelect.value = params.get('package');
+    tourSelect.dispatchEvent(new Event('change'));
+  }
+
+  // Prefill name if logged in
+  const user = AUTH.getCurrentUser();
+  if (user && user.username) {
+    document.getElementById('fullName').value = user.username;
+  }
+});
 
 const form = document.getElementById('bookingForm');
 const tourSelect = document.getElementById('tourSelect');
 const customFields = document.getElementById('customFields');
 const alertBox = document.getElementById('alertBox');
-
-// Set min date
-document.getElementById('travelDate').min = new Date().toISOString().split('T')[0];
-
-// Auto-fill from URL
-const params = new URLSearchParams(location.search);
-if (params.get('package')) tourSelect.value = params.get('package');
 
 // Toggle custom fields
 tourSelect.addEventListener('change', e => {
@@ -155,9 +167,10 @@ function calculate() {
   }
 }
 
-// Submit
+// Submit booking
 form.addEventListener('submit', async e => {
   e.preventDefault();
+
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
@@ -179,27 +192,19 @@ form.addEventListener('submit', async e => {
   };
 
   try {
-    const token = localStorage.getItem('authToken');
-    const res = await fetch(`${API}/bookings/package`, {
+    const result = await AUTH.apiRequest('/bookings/package', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : ''
-      },
       body: JSON.stringify(data)
     });
 
-    const result = await res.json();
-    
-    if (res.ok) {
-      alertBox.textContent = result.message || 'Booking confirmed!';
-      alertBox.className = 'alert-box success';
-      alertBox.style.display = 'block';
-      setTimeout(() => location.href = 'index.html', 2000);
-    } else {
-      throw new Error(result.message);
-    }
+    alertBox.textContent = result.message || 'Booking confirmed!';
+    alertBox.className = 'alert-box success';
+    alertBox.style.display = 'block';
+
+    setTimeout(() => location.href = 'index.html', 2000);
+
   } catch (err) {
+    console.error(err);
     alertBox.textContent = err.message || 'Booking failed. Please try again.';
     alertBox.className = 'alert-box error';
     alertBox.style.display = 'block';
@@ -207,18 +212,7 @@ form.addEventListener('submit', async e => {
     btn.innerHTML = '<i class="fas fa-paper-plane"></i> Confirm Booking';
   }
 });
-
-// Auth UI
-const token = localStorage.getItem('authToken');
-const username = localStorage.getItem('username');
-if (token && username) {
-  document.getElementById('authLinks').innerHTML = `
-    <span style="font-weight:600;margin-right:10px;">
-      <i class="fas fa-user-circle"></i> ${username}
-    </span>
-    <button onclick="localStorage.clear();location.href='index.html'" class="btn-secondary">Logout</button>
-  `;
-}
 </script>
+
 </body>
 </html>

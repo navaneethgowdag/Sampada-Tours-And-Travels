@@ -20,8 +20,7 @@
     <a href="contact.html">Contact</a>
   </nav>
   <div class="auth-links" id="authLinks">
-    <a href="login.html" class="btn-secondary" id="loginBtn">Login</a>
-    <a href="register.html" class="btn-primary" id="signupBtn">Sign Up</a>
+    <!-- Auth UI injected by auth.js -->
   </div>
 </header>
 
@@ -36,7 +35,7 @@
           <a href="tours.html" class="btn-primary large-cta">
             <i class="fas fa-route"></i> View Tour Packages
           </a>
-          <a href="book-package.html?package=Custom" class="btn-secondary large-cta secondary-cta">
+          <a href="booking.html?package=Custom" class="btn-secondary large-cta secondary-cta">
             <i class="fas fa-pen-fancy"></i> Plan Your Custom Trip
           </a>
         </div>
@@ -81,7 +80,7 @@
       <h2><i class="fas fa-map-marker-alt"></i> Popular Tours from Kalaburagi</h2>
 
       <div class="card-grid tour-grid">
-        <a href="book-package.html?package=Hampi" class="card tour-card">
+        <a href="booking.html?package=Hampi" class="card tour-card">
           <img src="images/hampi.jpg" alt="Hampi - UNESCO World Heritage Site" class="card-image">
           <div class="card-content">
             <h4>Hampi Tour</h4>
@@ -90,7 +89,7 @@
           </div>
         </a>
 
-        <a href="book-package.html?package=Bidar" class="card tour-card">
+        <a href="booking.html?package=Bidar" class="card tour-card">
           <img src="images/bidar.jpg" alt="Bidar - Fort and Heritage" class="card-image">
           <div class="card-content">
             <h4>Bidar Heritage</h4>
@@ -99,7 +98,7 @@
           </div>
         </a>
 
-        <a href="book-package.html?package=Vijayapura" class="card tour-card">
+        <a href="booking.html?package=Vijayapura" class="card tour-card">
           <img src="images/vijayapura.jpg" alt="Vijayapura - Gol Gumbaz" class="card-image">
           <div class="card-content">
             <h4>Vijayapura Monuments</h4>
@@ -150,15 +149,14 @@
   
   <section class="section gallery-section">
     <div class="container">
-        <h2>Travel Gallery</h2>
-        <div class="card-grid photo-grid">
-            <a href="#" class="gallery-item"><img src="images/gallery1.jpg" alt="Gallery Image 1" class="gallery-photo"></a>
-            <a href="#" class="gallery-item"><img src="images/gallery2.jpg" alt="Gallery Image 2" class="gallery-photo"></a>
-            <a href="#" class="gallery-item"><img src="images/gallery3.jpg" alt="Gallery Image 3" class="gallery-photo"></a>
-        </div>
+      <h2>Travel Gallery</h2>
+      <div class="card-grid photo-grid">
+        <a href="#" class="gallery-item"><img src="images/gallery1.jpg" alt="Gallery Image 1" class="gallery-photo"></a>
+        <a href="#" class="gallery-item"><img src="images/gallery2.jpg" alt="Gallery Image 2" class="gallery-photo"></a>
+        <a href="#" class="gallery-item"><img src="images/gallery3.jpg" alt="Gallery Image 3" class="gallery-photo"></a>
+      </div>
     </div>
   </section>
-
 </main>
 
 <footer class="main-footer">
@@ -169,81 +167,12 @@
   </div>
 </footer>
 
+<!-- Central Auth Script -->
+<script src="js/auth.js"></script>
 <script>
-/* =====================================================
-   AUTHENTICATION STATE MANAGEMENT
-===================================================== */
-document.addEventListener("DOMContentLoaded", () => {
-
-  // Use sessionStorage instead of localStorage for better security
-  const isAuthenticated = sessionStorage.getItem("isAuthenticated");
-  const username = sessionStorage.getItem("username");
-
-  const loginBtn = document.getElementById("loginBtn");
-  const signupBtn = document.getElementById("signupBtn");
-  const authLinks = document.getElementById("authLinks");
-
-  // If user is logged in
-  if (isAuthenticated === "true" && username) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (signupBtn) signupBtn.style.display = "none";
-
-    if (authLinks) {
-      authLinks.innerHTML = `
-        <span style="font-weight:600; margin-right:10px;">
-          <i class="fas fa-user-circle"></i> Hi, ${username}
-        </span>
-        <button id="logoutBtn" class="btn-secondary" aria-label="Logout">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-      `;
-
-      // Logout functionality
-      const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-          // Optional: Call backend logout endpoint
-          try {
-            await fetch("http://localhost:3000/logout", {
-              method: "POST",
-              credentials: 'include'
-            });
-          } catch (err) {
-            console.error("Logout error:", err);
-          }
-
-          // Clear session data
-          sessionStorage.removeItem("isAuthenticated");
-          sessionStorage.removeItem("username");
-          
-          // Show feedback
-          const tempMessage = document.createElement('div');
-          tempMessage.textContent = 'You have been logged out successfully.';
-          tempMessage.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:15px 20px;border-radius:5px;z-index:9999;';
-          document.body.appendChild(tempMessage);
-          
-          // Redirect after brief delay
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 1000);
-        });
-      }
-    }
-  }
-});
-
-/* =====================================================
-   CHECK AUTH STATUS ON PROTECTED PAGES (Optional)
-===================================================== */
-function requireAuth() {
-  const isAuthenticated = sessionStorage.getItem("isAuthenticated");
-  if (isAuthenticated !== "true") {
-    window.location.href = "login.html";
-  }
-}
-
-// Call this function on pages that require authentication
-// requireAuth();
+  document.addEventListener("DOMContentLoaded", () => {
+    AUTH.updateAuthUI();
+  });
 </script>
 
 </body>
