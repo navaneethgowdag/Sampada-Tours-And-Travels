@@ -3,7 +3,8 @@
    Include this in all pages: <script src="js/auth.js"></script>
 =========================== */
 
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://sampada-tours-and-travels-ood6.onrender.com';
+
 
 // Update auth UI on page load
 document.addEventListener('DOMContentLoaded', () => {
