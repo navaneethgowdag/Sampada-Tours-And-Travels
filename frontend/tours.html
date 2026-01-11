@@ -20,8 +20,7 @@
     <a href="contact.html">Contact</a>
   </nav>
   <div class="auth-links" id="authLinks">
-    <a href="login.html" class="btn-secondary" id="loginBtn">Login</a>
-    <a href="register.html" class="btn-primary" id="signupBtn">Sign Up</a>
+    <!-- Auth UI will be injected by auth.js -->
   </div>
 </header>
 
@@ -142,39 +141,12 @@
   </div>
 </footer>
 
-<script src="js/auth.js"></script>
+<!-- Centralized Auth Script -->
+<script src="auth.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  const token = localStorage.getItem("authToken");
-  const username = localStorage.getItem("username");
-
-  const loginBtn = document.getElementById("loginBtn");
-  const signupBtn = document.getElementById("signupBtn");
-  const authLinks = document.getElementById("authLinks");
-
-  if (token) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (signupBtn) signupBtn.style.display = "none";
-
-    if (authLinks) {
-      authLinks.innerHTML = `
-        <span style="font-weight:600; margin-right:10px;">
-          👋 Hi, ${username || "User"}
-        </span>
-        <button id="logoutBtn" class="btn-secondary">Logout</button>
-      `;
-
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("username");
-        alert("You have been logged out.");
-        window.location.href = "index.html";
-      });
-    }
-  }
-
-});
+  document.addEventListener("DOMContentLoaded", () => {
+    AUTH.updateAuthUI();
+  });
 </script>
 
 </body>
