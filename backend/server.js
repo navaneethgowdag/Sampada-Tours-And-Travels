@@ -28,8 +28,14 @@ const allowedOrigins = [
   'http://127.0.0.1:5000',
   'http://localhost:8000',
   'http://127.0.0.1:8000',
+
+  // ✅ Render Frontend
+  'https://sampada-tours-and-travels-1-f4yv.onrender.com',
+
+  // Optional: Environment variable
   process.env.FRONTEND_URL
 ].filter(Boolean);
+
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -40,8 +46,9 @@ const corsOptions = {
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
-      callback(null, true); // Allow all origins in development
+      callback(new Error('Not allowed by CORS'));
     }
+
   },
   credentials: true,
   optionsSuccessStatus: 200,
