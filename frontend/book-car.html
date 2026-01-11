@@ -4,6 +4,7 @@
   <title>Book a Car | Sampada Tours & Travels</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Book affordable car rentals for local and outstation trips">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -41,9 +42,9 @@
         <label for="vehicle">Vehicle Type</label>
         <select id="vehicle" required aria-describedby="vehicleError">
           <option value="">Select Vehicle</option>
-          <option value="Sedan" data-local="12" data-outstation="13" data-driver="300">Sedan (Swift Dzire)</option>
-          <option value="SUV" data-local="15" data-outstation="16" data-driver="350">SUV (Innova)</option>
-          <option value="Tempo" data-local="20" data-outstation="22" data-driver="400">Tempo Traveller</option>
+          <option value="Sedan" data-local="12" data-outstation="13" data-driver="300">Sedan (Swift Dzire) - ₹12/km (Local), ₹13/km (Outstation)</option>
+          <option value="SUV" data-local="15" data-outstation="16" data-driver="350">SUV (Innova) - ₹15/km (Local), ₹16/km (Outstation)</option>
+          <option value="Tempo" data-local="20" data-outstation="22" data-driver="400">Tempo Traveller - ₹20/km (Local), ₹22/km (Outstation)</option>
         </select>
         <span id="vehicleError" class="error-message" style="display: none;"></span>
       </div>
@@ -52,15 +53,15 @@
         <label for="tripType">Trip Type</label>
         <select id="tripType" required aria-describedby="tripTypeError">
           <option value="">Select Trip Type</option>
-          <option value="Local">Local</option>
-          <option value="Outstation">Outstation</option>
+          <option value="Local">Local (Within city)</option>
+          <option value="Outstation">Outstation (Outside city)</option>
         </select>
         <span id="tripTypeError" class="error-message" style="display: none;"></span>
       </div>
 
       <div class="form-group">
         <label for="kms">Distance (KM)</label>
-        <input type="number" id="kms" min="1" placeholder="Enter distance" required aria-describedby="kmsError">
+        <input type="number" id="kms" min="1" placeholder="Enter distance in kilometers" required aria-describedby="kmsError">
         <span id="kmsError" class="error-message" style="display: none;"></span>
       </div>
 
@@ -72,7 +73,7 @@
 
       <div class="form-group">
         <input type="checkbox" id="noDriver">
-        <label for="noDriver">No Driver Required</label>
+        <label for="noDriver">No Driver Required (Self-Drive)</label>
       </div>
     </fieldset>
 
@@ -96,7 +97,7 @@
 
       <div class="form-group total-amount-group">
         <label for="totalAmount">Total Estimated Amount (₹)</label>
-        <input type="number" id="totalAmount" value="0" readonly>
+        <input type="number" id="totalAmount" value="0" readonly style="font-size: 1.2em; font-weight: bold; color: #2563eb;">
       </div>
     </fieldset>
 
@@ -104,25 +105,25 @@
       <legend>Your Contact Information</legend>
 
       <div class="form-group">
-        <label for="fullName">Full Name</label>
+        <label for="fullName">Full Name *</label>
         <input type="text" id="fullName" placeholder="Your full name" required autocomplete="name" aria-describedby="fullNameError">
         <span id="fullNameError" class="error-message" style="display: none;"></span>
       </div>
 
       <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" placeholder="9876543210" required autocomplete="tel" aria-describedby="phoneError" pattern="[0-9]{10}">
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" placeholder="9876543210" required autocomplete="tel" aria-describedby="phoneError" pattern="[0-9]{10}" maxlength="10">
         <span id="phoneError" class="error-message" style="display: none;"></span>
       </div>
 
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="email">Email (Optional)</label>
         <input type="email" id="email" placeholder="you@example.com" autocomplete="email" aria-describedby="emailError">
         <span id="emailError" class="error-message" style="display: none;"></span>
       </div>
 
       <div class="form-group">
-        <label for="startDate">Travel Start Date</label>
+        <label for="startDate">Travel Start Date *</label>
         <input type="date" id="startDate" required aria-describedby="startDateError">
         <span id="startDateError" class="error-message" style="display: none;"></span>
       </div>
@@ -145,17 +146,22 @@
 
 <script>
 /* ===========================
+   CONFIGURATION
+=========================== */
+const API_URL = 'http://localhost:3000';
+
+/* ===========================
    AUTHENTICATION STATE MANAGEMENT
 =========================== */
 document.addEventListener("DOMContentLoaded", () => {
-  const isAuthenticated = sessionStorage.getItem("isAuthenticated");
-  const username = sessionStorage.getItem("username");
+  const token = localStorage.getItem("authToken");
+  const username = localStorage.getItem("username");
 
   const loginBtn = document.getElementById("loginBtn");
   const signupBtn = document.getElementById("signupBtn");
   const authLinks = document.getElementById("authLinks");
 
-  if (isAuthenticated === "true" && username) {
+  if (token && username) {
     if (loginBtn) loginBtn.style.display = "none";
     if (signupBtn) signupBtn.style.display = "none";
 
@@ -171,23 +177,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const logoutBtn = document.getElementById("logoutBtn");
       if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-          try {
-            await fetch("http://localhost:3000/logout", {
-              method: "POST",
-              credentials: 'include'
-            });
-          } catch (err) {
-            console.error("Logout error:", err);
-          }
-
-          sessionStorage.removeItem("isAuthenticated");
-          sessionStorage.removeItem("username");
+        logoutBtn.addEventListener("click", () => {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("username");
           
-          const tempMessage = document.createElement('div');
-          tempMessage.textContent = 'You have been logged out successfully.';
-          tempMessage.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:15px 20px;border-radius:5px;z-index:9999;';
-          document.body.appendChild(tempMessage);
+          showAlert('You have been logged out successfully.', 'success');
           
           setTimeout(() => {
             window.location.href = "index.html";
@@ -210,6 +204,8 @@ function showAlert(message, type = 'error') {
   setTimeout(() => {
     alertBox.style.display = 'none';
   }, 5000);
+  
+  alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function showFieldError(fieldId, message) {
@@ -220,6 +216,7 @@ function showFieldError(fieldId, message) {
     field.closest('.form-group').classList.add('error');
     errorSpan.textContent = message;
     errorSpan.style.display = 'block';
+    field.setAttribute('aria-invalid', 'true');
   }
 }
 
@@ -231,6 +228,7 @@ function clearFieldError(fieldId) {
     field.closest('.form-group').classList.remove('error');
     errorSpan.textContent = '';
     errorSpan.style.display = 'none';
+    field.removeAttribute('aria-invalid');
   }
 }
 
@@ -246,13 +244,16 @@ function validatePhone(phone) {
 
 function setLoadingState(isLoading) {
   const submitBtn = document.getElementById('submitBtn');
+  const formInputs = document.querySelectorAll('#carBookingForm input, #carBookingForm select, #carBookingForm button');
   
   if (isLoading) {
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Booking...';
+    formInputs.forEach(input => input.disabled = true);
   } else {
     submitBtn.disabled = false;
     submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Booking';
+    formInputs.forEach(input => input.disabled = false);
   }
 }
 
@@ -269,6 +270,10 @@ function calculatePrice() {
   const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
 
   if (!selectedOption.value || !tripType) {
+    document.getElementById("pricePerKm").value = 0;
+    document.getElementById("driverPerDay").value = 0;
+    document.getElementById("driverTotal").value = 0;
+    document.getElementById("totalAmount").value = 0;
     return;
   }
 
@@ -277,12 +282,13 @@ function calculatePrice() {
   const driverAllowancePerDay = parseFloat(selectedOption.dataset.driver) || 0;
 
   const pricePerKm = tripType === "Local" ? localRate : outstationRate;
-  const driverTotal = noDriver ? 0 : driverAllowancePerDay * days;
+  const driverPerDay = noDriver ? 0 : driverAllowancePerDay;
+  const driverTotal = driverPerDay * days;
   const totalAmount = (kms * pricePerKm) + driverTotal;
 
-  document.getElementById("pricePerKm").value = pricePerKm;
-  document.getElementById("driverPerDay").value = noDriver ? 0 : driverAllowancePerDay;
-  document.getElementById("driverTotal").value = driverTotal;
+  document.getElementById("pricePerKm").value = pricePerKm.toFixed(2);
+  document.getElementById("driverPerDay").value = driverPerDay.toFixed(2);
+  document.getElementById("driverTotal").value = driverTotal.toFixed(2);
   document.getElementById("totalAmount").value = totalAmount.toFixed(2);
 }
 
@@ -292,6 +298,16 @@ document.getElementById("tripType").addEventListener("change", calculatePrice);
 document.getElementById("kms").addEventListener("input", calculatePrice);
 document.getElementById("days").addEventListener("input", calculatePrice);
 document.getElementById("noDriver").addEventListener("change", calculatePrice);
+
+/* ===========================
+   PHONE NUMBER FORMATTING
+=========================== */
+const phoneInput = document.getElementById('phone');
+if (phoneInput) {
+  phoneInput.addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '');
+  });
+}
 
 /* ===========================
    FORM SUBMISSION
@@ -317,48 +333,62 @@ document.getElementById("carBookingForm").addEventListener("submit", async (e) =
 
   // Validation
   let isValid = true;
+  let firstErrorField = null;
 
   if (!vehicle) {
     showFieldError('vehicle', 'Please select a vehicle type');
     isValid = false;
+    if (!firstErrorField) firstErrorField = 'vehicle';
   }
 
   if (!tripType) {
     showFieldError('tripType', 'Please select trip type');
     isValid = false;
+    if (!firstErrorField) firstErrorField = 'tripType';
   }
 
   if (!kms || kms < 1) {
     showFieldError('kms', 'Please enter valid distance (minimum 1 km)');
     isValid = false;
+    if (!firstErrorField) firstErrorField = 'kms';
   }
 
   if (!days || days < 1) {
     showFieldError('days', 'Please enter valid number of days');
     isValid = false;
+    if (!firstErrorField) firstErrorField = 'days';
   }
 
   if (!fullName) {
     showFieldError('fullName', 'Full name is required');
     isValid = false;
+    if (!firstErrorField) firstErrorField = 'fullName';
+  } else if (fullName.length < 3) {
+    showFieldError('fullName', 'Name must be at least 3 characters');
+    isValid = false;
+    if (!firstErrorField) firstErrorField = 'fullName';
   }
 
   if (!phone) {
     showFieldError('phone', 'Phone number is required');
     isValid = false;
+    if (!firstErrorField) firstErrorField = 'phone';
   } else if (!validatePhone(phone)) {
     showFieldError('phone', 'Please enter a valid 10-digit phone number');
     isValid = false;
+    if (!firstErrorField) firstErrorField = 'phone';
   }
 
   if (email && !validateEmail(email)) {
     showFieldError('email', 'Please enter a valid email address');
     isValid = false;
+    if (!firstErrorField) firstErrorField = 'email';
   }
 
   if (!startDate) {
     showFieldError('startDate', 'Travel start date is required');
     isValid = false;
+    if (!firstErrorField) firstErrorField = 'startDate';
   } else {
     const selectedDate = new Date(startDate);
     const today = new Date();
@@ -367,11 +397,20 @@ document.getElementById("carBookingForm").addEventListener("submit", async (e) =
     if (selectedDate < today) {
       showFieldError('startDate', 'Start date cannot be in the past');
       isValid = false;
+      if (!firstErrorField) firstErrorField = 'startDate';
     }
+  }
+
+  if (parseFloat(totalAmount) <= 0) {
+    showAlert('Please calculate the price before booking');
+    isValid = false;
   }
 
   if (!isValid) {
     showAlert('Please fix the errors in the form');
+    if (firstErrorField) {
+      document.getElementById(firstErrorField).focus();
+    }
     return;
   }
 
@@ -385,15 +424,17 @@ document.getElementById("carBookingForm").addEventListener("submit", async (e) =
     noDriver,
     fullName,
     phone,
-    email,
+    email: email || null,
     startDate,
     totalAmount: parseFloat(totalAmount)
   };
 
   try {
-    const res = await fetch("http://localhost:3000/book-car", {
+    const res = await fetch(`${API_URL}/book-car`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json"
+      },
       credentials: 'include',
       body: JSON.stringify(bookingData)
     });
@@ -401,21 +442,21 @@ document.getElementById("carBookingForm").addEventListener("submit", async (e) =
     const result = await res.json();
 
     if (res.ok) {
-      showAlert('Car booking confirmed! We will contact you shortly.', 'success');
+      showAlert(result.message || 'Car booking confirmed! We will contact you shortly.', 'success');
       
       // Reset form after successful booking
       setTimeout(() => {
         document.getElementById("carBookingForm").reset();
         calculatePrice();
         window.location.href = "index.html";
-      }, 2000);
+      }, 2500);
     } else {
       showAlert(result.message || "Booking failed. Please try again.");
       setLoadingState(false);
     }
   } catch (err) {
     console.error("Booking Error:", err);
-    showAlert("Server not responding. Please try again later.");
+    showAlert("Unable to connect to server. Please check your connection and try again.");
     setLoadingState(false);
   }
 });
@@ -431,7 +472,9 @@ document.getElementById("carBookingForm").addEventListener("submit", async (e) =
   }
 });
 
-// Set minimum date to today
+/* ===========================
+   SET MINIMUM DATE
+=========================== */
 const today = new Date().toISOString().split('T')[0];
 document.getElementById("startDate").setAttribute("min", today);
 </script>

@@ -10,245 +10,142 @@
 <body>
 
 <header class="main-header">
-  <div class="logo">
-    <a href="index.html">Sampada Tours & Travels</a>
-  </div>
+  <div class="logo"><a href="index.html">Sampada Tours & Travels</a></div>
   <nav class="main-nav">
     <a href="index.html">Home</a>
     <a href="tours.html">Tours</a>
     <a href="car-rentals.html">Car Rentals</a>
-    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="active">Contact</a>
   </nav>
   <div class="auth-links" id="authLinks">
-    <a href="login.html" class="btn-secondary" id="loginBtn">Login</a>
-    <a href="register.html" class="btn-primary" id="signupBtn">Sign Up</a>
+    <a href="login.html" class="btn-secondary">Login</a>
+    <a href="register.html" class="btn-primary">Sign Up</a>
   </div>
 </header>
 
 <main class="container section">
-
   <h2><i class="far fa-comment-dots"></i> Send Us Your Feedback</h2>
-  <p class="section-description">Your feedback helps us improve our services and travel experiences.</p>
+  <p class="section-description">Your feedback helps us improve our services.</p>
+
+  <div id="alertBox" class="alert-box" style="display:none;"></div>
 
   <form id="feedbackForm" class="feedback-form">
-
     <fieldset>
-      <legend>Your Contact Information</legend>
-
+      <legend>Contact Information</legend>
       <div class="form-group">
-        <label for="fullName">Full Name</label>
-        <input type="text" id="fullName" placeholder="Enter your full name" required>
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" required>
       </div>
-
       <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" placeholder="9876543210" required>
+        <label for="phone">Phone *</label>
+        <input type="tel" id="phone" pattern="[0-9]{10}" maxlength="10" required>
       </div>
-
       <div class="form-group">
-        <label for="email">Email (Optional)</label>
-        <input type="email" id="email" placeholder="you@example.com">
+        <label for="email">Email</label>
+        <input type="email" id="email">
       </div>
     </fieldset>
 
     <fieldset>
-      <legend>Service Details</legend>
-
+      <legend>Feedback Details</legend>
       <div class="form-group">
-        <label for="serviceType">Service Type</label>
+        <label for="serviceType">Service Type *</label>
         <select id="serviceType" required>
           <option value="">Select Service</option>
           <option value="Tour Package">Tour Package</option>
           <option value="Car Rental">Car Rental</option>
           <option value="Custom Trip">Custom Trip</option>
+          <option value="General Inquiry">General Inquiry</option>
         </select>
       </div>
-
       <div class="form-group">
-        <label for="travelDate">Travel Date (Optional)</label>
-        <input type="date" id="travelDate">
-      </div>
-
-      <div class="form-group rating-group">
-        <label>Overall Experience Rating</label>
-        <div class="star-rating" id="rating">
-          <i class="far fa-star" data-rating="1"></i>
-          <i class="far fa-star" data-rating="2"></i>
-          <i class="far fa-star" data-rating="3"></i>
-          <i class="far fa-star" data-rating="4"></i>
-          <i class="far fa-star" data-rating="5"></i>
-        </div>
-        <input type="hidden" id="serviceRating" value="0" required>
-        <p class="rating-label"></p>
-      </div>
-    </fieldset>
-
-    <fieldset>
-      <legend>Your Feedback</legend>
-
-      <div class="form-group">
-        <label for="message">Your Feedback / Enquiry</label>
+        <label for="message">Your Message *</label>
         <textarea id="message" rows="4" placeholder="Tell us about your experience..." required></textarea>
       </div>
     </fieldset>
 
-    <button type="submit" class="btn-submit">
+    <button type="submit" class="btn-submit" id="submitBtn">
       <i class="fas fa-paper-plane"></i> Submit Feedback
     </button>
-
   </form>
 </main>
 
 <footer class="main-footer">
   <div class="footer-content">
     <p>Sampada Tours & Travels</p>
-    <p class="address"><i class="fas fa-map-marker-alt"></i> Kirana Bazar Road, Mominpura, Kalaburagi, Karnataka</p>
     <p class="copyright">© 2025 Sampada Tours & Travels</p>
   </div>
 </footer>
 
 <script>
-/* ===========================
-   STAR RATING LOGIC
-=========================== */
-const ratingInput = document.getElementById("serviceRating");
-const starRating = document.getElementById("rating");
-const ratingLabel = document.querySelector(".rating-label");
-const ratingText = [
-  "",
-  "Poor - Needs major improvement.",
-  "Fair - Satisfactory, but issues remain.",
-  "Good - Met expectations.",
-  "Very Good - Exceeded expectations!",
-  "Excellent - Highly recommended!"
-];
+const API = 'http://localhost:3000';
+const form = document.getElementById('feedbackForm');
+const alertBox = document.getElementById('alertBox');
 
-function updateStars(rating, type) {
-  const stars = starRating.querySelectorAll('i');
-  stars.forEach(star => {
-    const starValue = parseInt(star.dataset.rating);
-    if (type === 'hover') {
-      star.className = starValue <= rating ? 'fas fa-star hover-fill' : 'far fa-star';
-    } else {
-      star.className = starValue <= rating ? 'fas fa-star clicked-fill' : 'far fa-star';
-    }
-  });
-}
-
-starRating.addEventListener("mouseover", (e) => {
-  if (e.target.tagName === 'I') {
-    const hoverRating = parseInt(e.target.dataset.rating);
-    updateStars(hoverRating, 'hover');
-    ratingLabel.textContent = ratingText[hoverRating];
-  }
+// Phone number formatting
+document.getElementById('phone').addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/\D/g, '');
 });
 
-starRating.addEventListener("mouseout", () => {
-  updateStars(parseInt(ratingInput.value), 'click');
-  ratingLabel.textContent = ratingText[parseInt(ratingInput.value)];
-});
-
-starRating.addEventListener("click", (e) => {
-  if (e.target.tagName === 'I') {
-    const newRating = parseInt(e.target.dataset.rating);
-    ratingInput.value = newRating;
-    updateStars(newRating, 'click');
-    ratingLabel.textContent = ratingText[newRating];
-  }
-});
-
-ratingLabel.textContent = ratingText[0];
-
-/* ===========================
-   SUBMIT FEEDBACK
-=========================== */
-document.getElementById("feedbackForm").addEventListener("submit", async (e) => {
+// Submit feedback
+form.addEventListener('submit', async e => {
   e.preventDefault();
-
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Please login to submit feedback");
-    location.href = "login.html";
-    return;
-  }
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
   const data = {
-    full_name: document.getElementById("fullName").value,
-    phone_number: document.getElementById("phone").value,
-    email: document.getElementById("email").value,
-    service_type: document.getElementById("serviceType").value,
-    travel_date: document.getElementById("travelDate").value,
-    rating: document.getElementById("serviceRating").value,
-    message: document.getElementById("message").value
+    service_type: document.getElementById('serviceType').value,
+    message: document.getElementById('message').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value || null,
+    name: document.getElementById('name').value
   };
 
-  if (!data.service_type || !data.message) {
-    alert("Please fill all required fields");
-    return;
-  }
-
   try {
-    const res = await fetch("http://localhost:3000/feedback", {
-      method: "POST",
+    const token = localStorage.getItem('authToken');
+    const res = await fetch(`${API}/feedback`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
       },
       body: JSON.stringify(data)
     });
 
     const result = await res.json();
-    alert(result.message);
 
     if (res.ok) {
-      e.target.reset();
-      ratingInput.value = "0";
-      updateStars(0, 'click');
-      ratingLabel.textContent = ratingText[0];
+      alertBox.textContent = result.message || 'Thank you for your feedback!';
+      alertBox.className = 'alert-box success';
+      alertBox.style.display = 'block';
+      form.reset();
+    } else {
+      throw new Error(result.message);
     }
-  } catch {
-    alert("Server error. Please try again later.");
+  } catch (err) {
+    alertBox.textContent = err.message || 'Failed to submit. Please try again.';
+    alertBox.className = 'alert-box error';
+    alertBox.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
   }
 });
+
+// Auth UI
+const token = localStorage.getItem('authToken');
+const username = localStorage.getItem('username');
+if (token && username) {
+  document.getElementById('authLinks').innerHTML = `
+    <span style="font-weight:600;margin-right:10px;">
+      <i class="fas fa-user-circle"></i> ${username}
+    </span>
+    <button onclick="localStorage.clear();location.href='index.html'" class="btn-secondary">Logout</button>
+  `;
+  // Pre-fill name if logged in
+  document.getElementById('name').value = username;
+}
 </script>
-
-<script src="js/auth.js"></script>
-
-<script>
-/* ===========================
-   HIDE LOGIN / SIGNUP AFTER LOGIN
-=========================== */
-document.addEventListener("DOMContentLoaded", () => {
-
-  const token = localStorage.getItem("token");
-  const username = localStorage.getItem("username");
-
-  const loginBtn = document.getElementById("loginBtn");
-  const signupBtn = document.getElementById("signupBtn");
-  const authLinks = document.getElementById("authLinks");
-
-  if (token) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (signupBtn) signupBtn.style.display = "none";
-
-    if (authLinks) {
-      authLinks.innerHTML = `
-        <span style="font-weight:600; margin-right:10px;">
-          👋 Hi, ${username || "User"}
-        </span>
-        <button id="logoutBtn" class="btn-secondary">Logout</button>
-      `;
-
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        alert("You have been logged out.");
-        window.location.href = "index.html";
-      });
-    }
-  }
-});
-</script>
-
 </body>
 </html>
