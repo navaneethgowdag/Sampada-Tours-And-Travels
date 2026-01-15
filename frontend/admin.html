@@ -368,35 +368,51 @@ function renderCarBookings(bookings) {
     return d.toLocaleDateString("en-IN");
   }
 
-  async function updatePackageStatus(id) {
+async function updatePackageStatus(id) {
   const status = document.getElementById(`pkg-status-${id}`).value;
 
   try {
-    await AUTH.apiRequest(`/admin/bookings/package/${id}/status`, {
+    const response = await AUTH.apiRequest(`/admin/bookings/package/${id}/status`, {
       method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })
     });
 
-    alert("Package status updated!");
+    // ✅ SUCCESS POPUP
+    alert("✅ Package booking status updated successfully!");
+    location.reload(); // Refresh to reflect changes
+
   } catch (err) {
-    alert(err.message || "Failed to update package status");
+    console.error("Package update failed:", err);
+
+    // ❌ ERROR POPUP
+    alert("❌ Error: " + (err.message || "Failed to update package status"));
   }
 }
+
 
 async function updateCarStatus(id) {
   const status = document.getElementById(`car-status-${id}`).value;
 
   try {
-    await AUTH.apiRequest(`/admin/bookings/car/${id}/status`, {
+    const response = await AUTH.apiRequest(`/admin/bookings/car/${id}/status`, {
       method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })
     });
 
-    alert("Car booking status updated!");
+    // ✅ SUCCESS POPUP
+    alert("✅ Car booking status updated successfully!");
+    location.reload(); // Refresh to reflect changes
+
   } catch (err) {
-    alert(err.message || "Failed to update car status");
+    console.error("Car update failed:", err);
+
+    // ❌ ERROR POPUP
+    alert("❌ Error: " + (err.message || "Failed to update car status"));
   }
 }
+
 
 
 });
