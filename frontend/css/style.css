@@ -859,7 +859,7 @@ input[readonly] {
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%);
-  padding: 40px 20px;
+  padding: 40px 40px;
 }
 
 .auth-box {
@@ -1074,6 +1074,15 @@ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   .logo a {
     font-size: 1.1rem;
   }
+  
+  .auth-container {
+    min-height: 20%;       /* Prevents forcing large height */
+    padding: 20px 16px;     /* Smaller spacing */
+    width: auto;
+    margin-right: 10%;
+  }
+
+  
 
   .auth-links {
     order: 2;
@@ -1118,6 +1127,9 @@ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   .auth-links .btn-secondary {
     padding: 8px 12px;
     font-size: 0.8rem;
+  }
+  .auth-container {
+    padding: 16px 12px;     /* Even tighter for small phones */
   }
 }
 
