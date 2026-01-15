@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Admin Dashboard | Sampada Tours & Travels</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .admin-card {
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .admin-card h3 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #1f2937;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .admin-table th, .admin-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .admin-table th {
+      background: #f3f6ff;
+      font-weight: 600;
+    }
+
+    .section-box {
+      margin: 40px 0;
+    }
+
+    .status {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status.pending { background: #fff3cd; color: #856404; }
+    .status.confirmed { background: #d1fae5; color: #065f46; }
+    .status.completed { background: #e0e7ff; color: #3730a3; }
+
+    .empty-box {
+      padding: 20px;
+      background: #f9fafb;
+      border: 1px dashed #ccc;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo"><a href="index.html">Sampada Tours & Travels</a></div>
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="my-bookings.html">My Bookings</a>
+    <a href="admin.html" class="active">Admin</a>
+  </nav>
+  <div class="auth-links" id="authLinks"></div>
+</header>
+
+<main class="container section">
+  <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+  <p>Manage users, bookings, and feedback.</p>
+
+  <div id="alertBox" class="alert-box" style="display:none;"></div>
+
+  <!-- QUICK STATS -->
+  <div class="admin-grid">
+    <div class="admin-card">
+      <h3>Total Users</h3>
+      <p id="totalUsers">0</p>
+    </div>
+    <div class="admin-card">
+      <h3>Package Bookings</h3>
+      <p id="totalPackages">0</p>
+    </div>
+    <div class="admin-card">
+      <h3>Car Bookings</h3>
+      <p id="totalCars">0</p>
+    </div>
+    <div class="admin-card">
+      <h3>Feedback Messages</h3>
+      <p id="totalFeedback">0</p>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="section-box">
+    <h2><i class="fas fa-users"></i> Registered Users</h2>
+    <div id="usersContainer"></div>
+  </div>
+
+  <!-- PACKAGE BOOKINGS -->
+  <div class="section-box">
+    <h2><i class="fas fa-suitcase"></i> Package Bookings</h2>
+    <div id="packageContainer"></div>
+  </div>
+
+  <!-- CAR BOOKINGS -->
+  <div class="section-box">
+    <h2><i class="fas fa-car"></i> Car Bookings</h2>
+    <div id="carContainer"></div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="section-box">
+    <h2><i class="fas fa-comments"></i> Customer Feedback</h2>
+    <div id="feedbackContainer"></div>
+  </div>
+
+</main>
+
+<footer class="main-footer">
+  <div class="footer-content">
+    <p>Sampada Tours & Travels</p>
+    <p>© 2025 Sampada Tours & Travels</p>
+  </div>
+</footer>
+
+<script src="auth.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const alertBox = document.getElementById("alertBox");
+
+  // 🔐 AUTH CHECK
+  const user = AUTH.getCurrentUser();
+  if (!user) {
+    alert("Please login as admin.");
+    window.location.href = "login.html?redirect=" + encodeURIComponent("admin.html");
+    return;
+  }
+
+  if (!user.is_admin) {
+    alert("Access denied. Admins only.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  AUTH.updateAuthUI();
+
+  try {
+    // USERS
+    const usersData = await AUTH.apiRequest("/admin/users", { method: "GET" });
+    renderUsers(usersData.users || []);
+    document.getElementById("totalUsers").textContent = usersData.users.length;
+
+    // PACKAGE BOOKINGS
+    const packageData = await AUTH.apiRequest("/admin/bookings/package", { method: "GET" });
+    renderPackageBookings(packageData.bookings || []);
+    document.getElementById("totalPackages").textContent = packageData.bookings.length;
+
+    // CAR BOOKINGS
+    const carData = await AUTH.apiRequest("/admin/bookings/car", { method: "GET" });
+    renderCarBookings(carData.bookings || []);
+    document.getElementById("totalCars").textContent = carData.bookings.length;
+
+    // FEEDBACK
+    const feedbackData = await AUTH.apiRequest("/admin/feedback", { method: "GET" });
+    renderFeedback(feedbackData.feedback || []);
+    document.getElementById("totalFeedback").textContent = feedbackData.feedback.length;
+
+  } catch (err) {
+    console.error(err);
+    alertBox.textContent = err.message || "Failed to load admin data.";
+    alertBox.className = "alert-box error";
+    alertBox.style.display = "block";
+  }
+
+  // =========================
+  // RENDER FUNCTIONS
+  // =========================
+
+  function renderUsers(users) {
+    const container = document.getElementById("usersContainer");
+    if (users.length === 0) {
+      container.innerHTML = `<div class="empty-box">No users found.</div>`;
+      return;
+    }
+
+    let html = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Admin</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    users.forEach(u => {
+      html += `
+        <tr>
+          <td>#${u.id}</td>
+          <td>${u.name}</td>
+          <td>${u.email}</td>
+          <td>${u.phone}</td>
+          <td>${u.is_admin ? "Yes" : "No"}</td>
+          <td>${formatDate(u.created_at)}</td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+
+  function renderPackageBookings(bookings) {
+    const container = document.getElementById("packageContainer");
+    if (bookings.length === 0) {
+      container.innerHTML = `<div class="empty-box">No package bookings.</div>`;
+      return;
+    }
+
+    let html = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Package</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    bookings.forEach(b => {
+      html += `
+        <tr>
+          <td>#${b.id}</td>
+          <td>${b.user_name || "Guest"}</td>
+          <td>${b.package_name}</td>
+          <td>${b.from_place || "-"}</td>
+          <td>${b.to_place || "-"}</td>
+          <td>${formatDate(b.travel_date)}</td>
+          <td>₹${b.total_amount}</td>
+          <td><span class="status ${b.status}">${b.status}</span></td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+
+  function renderCarBookings(bookings) {
+    const container = document.getElementById("carContainer");
+    if (bookings.length === 0) {
+      container.innerHTML = `<div class="empty-box">No car bookings.</div>`;
+      return;
+    }
+
+    let html = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Vehicle</th>
+            <th>Trip</th>
+            <th>KMs</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    bookings.forEach(b => {
+      html += `
+        <tr>
+          <td>#${b.id}</td>
+          <td>${b.user_name || "Guest"}</td>
+          <td>${b.vehicle_type}</td>
+          <td>${b.trip_type}</td>
+          <td>${b.kms}</td>
+          <td>${formatDate(b.travel_date)}</td>
+          <td>₹${b.total_amount}</td>
+          <td><span class="status ${b.status}">${b.status}</span></td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+
+  function renderFeedback(feedback) {
+    const container = document.getElementById("feedbackContainer");
+    if (feedback.length === 0) {
+      container.innerHTML = `<div class="empty-box">No feedback yet.</div>`;
+      return;
+    }
+
+    let html = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Service</th>
+            <th>Message</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    feedback.forEach(f => {
+      html += `
+        <tr>
+          <td>#${f.id}</td>
+          <td>${f.user_name}</td>
+          <td>${f.email || "-"}</td>
+          <td>${f.service_type}</td>
+          <td>${f.message}</td>
+          <td>${formatDate(f.created_at)}</td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-IN");
+  }
+
+});
+</script>
+
+</body>
+</html>
