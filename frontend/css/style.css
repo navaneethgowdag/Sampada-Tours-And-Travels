@@ -387,9 +387,15 @@ p {
   display: grid;
   place-items: center;
   color: #fff;
-  background: var(--grad-hero);
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0.45)
+    ),
+    url("../images/hero.jpg") center / cover no-repeat;
   overflow: hidden;
 }
+
 
 .hero-section::before {
   content: '';
@@ -1178,3 +1184,20 @@ background: white;
 }
 
 .card { break-inside: avoid; } }
+
+.seat-badge {
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+}
+
+
+@keyframes fadeInSeat {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

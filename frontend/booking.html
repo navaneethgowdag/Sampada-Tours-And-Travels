@@ -115,104 +115,163 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  AUTH.updateAuthUI();
+    // 1. 🔐 AUTHENTICATION CHECK
+    const user = AUTH.getCurrentUser();
+    if (!user) {
+        alert("Please login to book a package.");
+        const redirectUrl = "book-package.html" + location.search;
+        window.location.href = `login.html?redirect=${encodeURIComponent(redirectUrl)}`;
+        return;
+    }
 
-  // Set min date
-  document.getElementById('travelDate').min = new Date().toISOString().split('T')[0];
+    AUTH.updateAuthUI();
 
-  // Auto-fill from URL
-  const params = new URLSearchParams(location.search);
-  if (params.get('package')) {
-    tourSelect.value = params.get('package');
-    tourSelect.dispatchEvent(new Event('change'));
-  }
+    // 2. DOM ELEMENTS
+    const form = document.getElementById('bookingForm');
+    const tourSelect = document.getElementById('tourSelect');
+    const customFields = document.getElementById('customFields');
+    const alertBox = document.getElementById('alertBox');
+    const priceInput = document.getElementById('pricePerPerson');
+    const totalInput = document.getElementById('totalAmount');
+    const submitBtn = document.getElementById('submitBtn');
 
-  // Prefill name if logged in
-  const user = AUTH.getCurrentUser();
-  if (user && user.username) {
-    document.getElementById('fullName').value = user.username;
-  }
-});
+    // 3. PAGE INITIALIZATION
+    // Set min date to today
+    document.getElementById('travelDate').min = new Date().toISOString().split('T')[0];
 
-const form = document.getElementById('bookingForm');
-const tourSelect = document.getElementById('tourSelect');
-const customFields = document.getElementById('customFields');
-const alertBox = document.getElementById('alertBox');
+    // Prefill username
+    if (user.username) {
+        document.getElementById('fullName').value = user.username;
+    }
 
-// Toggle custom fields
-tourSelect.addEventListener('change', e => {
-  const isCustom = e.target.value === 'Custom';
-  customFields.style.display = isCustom ? 'block' : 'none';
-  const opt = e.target.options[e.target.selectedIndex];
-  document.getElementById('pricePerPerson').value = opt.dataset.price || 0;
-  calculate();
-});
+    // Auto-fill package from URL
+    const params = new URLSearchParams(window.location.search);
+    const urlPkg = params.get('package');
+    if (urlPkg) {
+        tourSelect.value = urlPkg;
+        updateFormUI(); // Trigger UI change
+    }
 
-// Calculate total
-['peopleCount', 'kms', 'days'].forEach(id => {
-  document.getElementById(id)?.addEventListener('input', calculate);
-});
+    // 4. CALCULATION LOGIC
+    function calculateTotal() {
 
-function calculate() {
-  const price = +document.getElementById('pricePerPerson').value;
-  const people = +document.getElementById('peopleCount').value || 1;
-  const isCustom = tourSelect.value === 'Custom';
-  
-  if (isCustom) {
-    const km = +document.getElementById('kms').value || 0;
-    const days = +document.getElementById('days').value || 0;
-    document.getElementById('totalAmount').value = km > 0 && days > 0 ? km * 12 * days * people : 0;
-  } else {
-    document.getElementById('totalAmount').value = price * people;
-  }
-}
+      const isCustom = tourSelect.value === 'Custom';
+      const people = parseInt(document.getElementById('peopleCount').value) || 1;
 
-// Submit booking
-form.addEventListener('submit', async e => {
-  e.preventDefault();
+      let total = 0;
 
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+      if (isCustom) {
+        const kmInput = document.getElementById('kms').value;
+        const daysInput = document.getElementById('days').value;
 
-  const isCustom = tourSelect.value === 'Custom';
-  const data = {
-    package_name: tourSelect.value,
-    price_per_person: +document.getElementById('pricePerPerson').value,
-    people_count: +document.getElementById('peopleCount').value,
-    from_place: isCustom ? document.getElementById('fromPlace').value : null,
-    to_place: isCustom ? document.getElementById('toPlace').value : null,
-    days: isCustom ? +document.getElementById('days').value : +tourSelect.options[tourSelect.selectedIndex].dataset.days,
-    kms: isCustom ? +document.getElementById('kms').value : null,
-    total_amount: +document.getElementById('totalAmount').value,
-    travel_date: document.getElementById('travelDate').value,
-    full_name: document.getElementById('fullName').value,
-    phone: document.getElementById('phone').value,
-    email: document.getElementById('email').value || null
-  };
+        const km = parseFloat(kmInput);
+        const days = parseInt(daysInput);
 
-  try {
-    const result = await AUTH.apiRequest('/bookings/package', {
-      method: 'POST',
-      body: JSON.stringify(data)
+        // Validate custom fields
+        if (!km || km <= 0 || !days || days <= 0) {
+            totalInput.value = 0;
+            return;
+        }
+
+        const ratePerKm = 12; // Custom package rate
+        total = km * ratePerKm * days * people;
+
+    } else {
+        const price = parseFloat(priceInput.value) || 0;
+        total = price * people;
+    }
+
+      totalInput.value = Math.round(total);
+    }
+
+
+    function updateFormUI() {
+        const isCustom = tourSelect.value === 'Custom';
+        customFields.style.display = isCustom ? 'block' : 'none';
+
+        // Update price per person from data attributes
+        const selectedOption = tourSelect.options[tourSelect.selectedIndex];
+        priceInput.value = selectedOption.dataset.price || 0;
+
+        calculateTotal();
+    }
+
+    // 5. EVENT LISTENERS
+    tourSelect.addEventListener('change', updateFormUI);
+
+    // Listen to all relevant inputs for real-time calculation
+    ['peopleCount', 'kms', 'days', 'pricePerPerson'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', calculateTotal);
     });
 
-    alertBox.textContent = result.message || 'Booking confirmed!';
-    alertBox.className = 'alert-box success';
-    alertBox.style.display = 'block';
+    // 6. FORM SUBMISSION
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    setTimeout(() => location.href = 'index.html', 2000);
+        // Final Auth check
+        if (!AUTH.getCurrentUser()) {
+            window.location.reload();
+            return;
+        }
 
-  } catch (err) {
-    console.error(err);
-    alertBox.textContent = err.message || 'Booking failed. Please try again.';
-    alertBox.className = 'alert-box error';
-    alertBox.style.display = 'block';
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Confirm Booking';
-  }
+        // UI Loading State
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        alertBox.style.display = 'none';
+
+        const isCustom = tourSelect.value === 'Custom';
+        const selectedOption = tourSelect.options[tourSelect.selectedIndex];
+
+        const payload = {
+            package_name: tourSelect.value,
+            price_per_person: parseFloat(priceInput.value),
+            people_count: parseInt(document.getElementById('peopleCount').value),
+            from_place: isCustom ? document.getElementById('fromPlace').value : "Kalaburagi",
+            to_place: isCustom ? document.getElementById('toPlace').value : tourSelect.value,
+            days: isCustom 
+                ? parseInt(document.getElementById('days').value) 
+                : parseInt(selectedOption.dataset.days),
+            kms: isCustom ? parseFloat(document.getElementById('kms').value) : null,
+            total_amount: parseFloat(totalInput.value),
+            travel_date: document.getElementById('travelDate').value,
+            full_name: document.getElementById('fullName').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value || null
+        };
+
+        try {
+            await AUTH.apiRequest('/bookings/package', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            alert("✅ Booking Successful! Our team will contact you shortly.");
+            window.location.href = "index.html";
+
+        } catch (err) {
+            console.error(err);
+
+            // 🚨 Handle "Failed to fetch" (CORS / Network / Not logged in)
+            if (err.message && err.message.includes("Failed to fetch")) {
+                alert("⚠️ You are not logged in or your session has expired.\n\nPlease login to continue booking.");
+
+                const redirectUrl = "book-package.html" + location.search;
+                window.location.href = "login.html?redirect=" + encodeURIComponent(redirectUrl);
+                return;
+            }
+
+            // Other backend errors
+            alertBox.textContent = err.message || 'Booking failed. Please try again.';
+            alertBox.className = 'alert-box error';
+            alertBox.style.display = 'block';
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Confirm Booking';
+        }
+    });
 });
 </script>
+
 
 </body>
 </html>

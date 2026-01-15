@@ -7,6 +7,26 @@
   <meta name="description" content="Book affordable car rentals for local and outstation trips">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    .seat-badge {
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+      display: none;
+      animation: fadeInSeat 0.3s ease-in;
+    }
+
+    @keyframes fadeInSeat {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
 
@@ -20,9 +40,7 @@
     <a href="car-rentals.html" class="active">Car Rentals</a>
     <a href="contact.html">Contact</a>
   </nav>
-  <div class="auth-links" id="authLinks">
-    <!-- Auth UI injected by auth.js -->
-  </div>
+  <div class="auth-links" id="authLinks"></div>
 </header>
 
 <main class="container section">
@@ -39,35 +57,34 @@
 
       <div class="form-group">
         <label for="vehicle">Vehicle Type</label>
-        <select id="vehicle" required aria-describedby="vehicleError">
+        <select id="vehicle" required>
           <option value="">Select Vehicle</option>
-          <option value="Sedan" data-local="12" data-outstation="13" data-driver="300">Sedan (Swift Dzire)</option>
-          <option value="SUV" data-local="15" data-outstation="16" data-driver="350">SUV (Innova)</option>
-          <option value="Tempo" data-local="20" data-outstation="22" data-driver="400">Tempo Traveller</option>
+          <option value="Sedan" data-local="12" data-outstation="13" data-driver="300" data-seats="4">Sedan (Swift Dzire)</option>
+          <option value="SUV" data-local="15" data-outstation="16" data-driver="350" data-seats="6">SUV (Innova)</option>
+          <option value="Tempo" data-local="20" data-outstation="22" data-driver="400" data-seats="12">Tempo Traveller</option>
         </select>
-        <span id="vehicleError" class="error-message" style="display: none;"></span>
+
+        <!-- SEAT BADGE -->
+        <span id="seatBadge" class="seat-badge">Max seats: 0</span>
       </div>
 
       <div class="form-group">
         <label for="tripType">Trip Type</label>
-        <select id="tripType" required aria-describedby="tripTypeError">
+        <select id="tripType" required>
           <option value="">Select Trip Type</option>
           <option value="Local">Local (Within city)</option>
           <option value="Outstation">Outstation (Outside city)</option>
         </select>
-        <span id="tripTypeError" class="error-message" style="display: none;"></span>
       </div>
 
       <div class="form-group">
         <label for="kms">Distance (KM)</label>
-        <input type="number" id="kms" min="1" required aria-describedby="kmsError">
-        <span id="kmsError" class="error-message" style="display: none;"></span>
+        <input type="number" id="kms" min="1" required>
       </div>
 
       <div class="form-group">
         <label for="days">Number of Days</label>
-        <input type="number" id="days" min="1" value="1" required aria-describedby="daysError">
-        <span id="daysError" class="error-message" style="display: none;"></span>
+        <input type="number" id="days" min="1" value="1" required>
       </div>
 
       <div class="form-group">
@@ -105,25 +122,21 @@
       <div class="form-group">
         <label for="fullName">Full Name *</label>
         <input type="text" id="fullName" required>
-        <span id="fullNameError" class="error-message" style="display: none;"></span>
       </div>
 
       <div class="form-group">
         <label for="phone">Phone Number *</label>
         <input type="tel" id="phone" pattern="[0-9]{10}" maxlength="10" required>
-        <span id="phoneError" class="error-message" style="display: none;"></span>
       </div>
 
       <div class="form-group">
         <label for="email">Email (Optional)</label>
         <input type="email" id="email">
-        <span id="emailError" class="error-message" style="display: none;"></span>
       </div>
 
       <div class="form-group">
         <label for="startDate">Travel Start Date *</label>
         <input type="date" id="startDate" required>
-        <span id="startDateError" class="error-message" style="display: none;"></span>
       </div>
     </fieldset>
 
@@ -141,108 +154,151 @@
   </div>
 </footer>
 
-<!-- Central Auth Script -->
 <script src="auth.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  AUTH.updateAuthUI();
+  document.addEventListener("DOMContentLoaded", () => {
+    AUTH.updateAuthUI();
 
-  // Set minimum date
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById("startDate").setAttribute("min", today);
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("startDate").setAttribute("min", today);
 
-  // Prefill name if logged in
-  const user = AUTH.getCurrentUser();
-  if (user && user.username) {
-    document.getElementById("fullName").value = user.username;
-  }
-});
+    const user = AUTH.getCurrentUser();
+    if (user && user.username) {
+      document.getElementById("fullName").value = user.username;
+    }
 
-/* ===========================
-   UTILITY FUNCTIONS
-=========================== */
-function showAlert(message, type = 'error') {
-  const alertBox = document.getElementById('alertBox');
-  alertBox.textContent = message;
-  alertBox.className = `alert-box ${type}`;
-  alertBox.style.display = 'block';
-  setTimeout(() => alertBox.style.display = 'none', 5000);
-}
+    // ✅ AUTO-FILL VEHICLE FROM URL
+    const params = new URLSearchParams(window.location.search);
+    const selectedVehicle = params.get("vehicle"); // Sedan / SUV / Tempo
 
-function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+    if (selectedVehicle) {
+      const vehicleSelect = document.getElementById("vehicle");
+      vehicleSelect.value = selectedVehicle;
 
-function validatePhone(phone) {
-  return /^[0-9]{10}$/.test(phone);
-}
+      // Trigger calculation + seat badge update
+      vehicleSelect.dispatchEvent(new Event("change"));
+    }
+  });
 
-/* ===========================
-   PRICE CALCULATION
-=========================== */
-function calculatePrice() {
+
+  // Cache elements (faster)
   const vehicleSelect = document.getElementById("vehicle");
-  const tripType = document.getElementById("tripType").value;
-  const kms = parseFloat(document.getElementById("kms").value) || 0;
-  const days = parseInt(document.getElementById("days").value) || 1;
-  const noDriver = document.getElementById("noDriver").checked;
+  const tripTypeSelect = document.getElementById("tripType");
+  const kmsInput = document.getElementById("kms");
+  const daysInput = document.getElementById("days");
+  const noDriverCheckbox = document.getElementById("noDriver");
 
-  const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
-  if (!selectedOption || !tripType) return;
+  const pricePerKmInput = document.getElementById("pricePerKm");
+  const driverPerDayInput = document.getElementById("driverPerDay");
+  const driverTotalInput = document.getElementById("driverTotal");
+  const totalAmountInput = document.getElementById("totalAmount");
 
-  const localRate = parseFloat(selectedOption.dataset.local) || 0;
-  const outstationRate = parseFloat(selectedOption.dataset.outstation) || 0;
-  const driverAllowancePerDay = parseFloat(selectedOption.dataset.driver) || 0;
+  const seatBadge = document.getElementById("seatBadge");
 
-  const pricePerKm = tripType === "Local" ? localRate : outstationRate;
-  const driverPerDay = noDriver ? 0 : driverAllowancePerDay;
-  const driverTotal = driverPerDay * days;
-  const totalAmount = (kms * pricePerKm) + driverTotal;
+  /* ===========================
+     PRICE + SEAT BADGE
+  =========================== */
+  function calculatePrice() {
+    const vehicleValue = vehicleSelect.value;
+    const tripType = tripTypeSelect.value;
+    const kms = parseFloat(kmsInput.value) || 0;
+    const days = parseInt(daysInput.value) || 1;
+    const noDriver = noDriverCheckbox.checked;
 
-  document.getElementById("pricePerKm").value = pricePerKm;
-  document.getElementById("driverPerDay").value = driverPerDay;
-  document.getElementById("driverTotal").value = driverTotal;
-  document.getElementById("totalAmount").value = totalAmount;
-}
+    // If no vehicle selected → hide badge + reset
+    if (!vehicleValue) {
+      seatBadge.style.display = "none";
+      pricePerKmInput.value = 0;
+      driverPerDayInput.value = 0;
+      driverTotalInput.value = 0;
+      totalAmountInput.value = 0;
+      return;
+    }
 
-["vehicle", "tripType", "kms", "days", "noDriver"].forEach(id => {
-  document.getElementById(id).addEventListener("change", calculatePrice);
-});
+    const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
 
-/* ===========================
-   FORM SUBMISSION
-=========================== */
-document.getElementById("carBookingForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+    /* 👉 SEAT BADGE */
+    const seats = selectedOption.dataset.seats;
+    if (seats) {
+      seatBadge.textContent = `Max seats: ${seats}`;
+      seatBadge.style.display = "inline-block";
+    } else {
+      seatBadge.style.display = "none";
+    }
 
-  const bookingData = {
-    vehicle: document.getElementById("vehicle").value,
-    tripType: document.getElementById("tripType").value,
-    kms: parseFloat(document.getElementById("kms").value),
-    days: parseInt(document.getElementById("days").value),
-    noDriver: document.getElementById("noDriver").checked,
-    fullName: document.getElementById("fullName").value.trim(),
-    phone: document.getElementById("phone").value.trim(),
-    email: document.getElementById("email").value.trim() || null,
-    startDate: document.getElementById("startDate").value,
-    totalAmount: parseFloat(document.getElementById("totalAmount").value)
-  };
+    // If trip type not selected, don’t calculate yet
+    if (!tripType) {
+      totalAmountInput.value = 0;
+      return;
+    }
 
-  try {
-    const result = await AUTH.apiRequest('/book-car', {
-      method: "POST",
-      body: JSON.stringify(bookingData)
-    });
+    const localRate = parseFloat(selectedOption.dataset.local) || 0;
+    const outstationRate = parseFloat(selectedOption.dataset.outstation) || 0;
+    const driverAllowancePerDay = parseFloat(selectedOption.dataset.driver) || 0;
 
-    showAlert(result.message || 'Car booking confirmed!', 'success');
-    setTimeout(() => window.location.href = "index.html", 2000);
+    const pricePerKm = tripType === "Local" ? localRate : outstationRate;
+    const driverPerDay = noDriver ? 0 : driverAllowancePerDay;
+    const driverTotal = driverPerDay * days;
+    const totalAmount = (kms * pricePerKm) + driverTotal;
 
-  } catch (err) {
-    console.error(err);
-    showAlert(err.message || 'Booking failed. Please try again.');
+    pricePerKmInput.value = pricePerKm;
+    driverPerDayInput.value = driverPerDay;
+    driverTotalInput.value = driverTotal;
+    totalAmountInput.value = Math.round(totalAmount);
   }
-});
+
+  // 🔁 FAST, REAL-TIME UPDATES
+  ["change", "input"].forEach(evt => {
+    vehicleSelect.addEventListener(evt, calculatePrice);
+    tripTypeSelect.addEventListener(evt, calculatePrice);
+    kmsInput.addEventListener(evt, calculatePrice);
+    daysInput.addEventListener(evt, calculatePrice);
+    noDriverCheckbox.addEventListener(evt, calculatePrice);
+  });
+
+  /* ===========================
+     FORM SUBMISSION
+  =========================== */
+  document.getElementById("carBookingForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const bookingData = {
+      vehicle: vehicleSelect.value,
+      tripType: tripTypeSelect.value,
+      kms: parseFloat(kmsInput.value),
+      days: parseInt(daysInput.value),
+      noDriver: noDriverCheckbox.checked,
+      fullName: document.getElementById("fullName").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      email: document.getElementById("email").value.trim() || null,
+      startDate: document.getElementById("startDate").value,
+      totalAmount: parseFloat(totalAmountInput.value)
+    };
+
+    try {
+      const result = await AUTH.apiRequest('/book-car', {
+        method: "POST",
+        body: JSON.stringify(bookingData)
+      });
+
+      alert("✅ Car booking confirmed! We will contact you shortly.");
+      setTimeout(() => window.location.href = "index.html", 2000);
+
+    } catch (err) {
+      console.error(err);
+
+      if (err.message && err.message.includes("Failed to fetch")) {
+        alert("⚠️ You are not logged in or your session has expired.\n\nPlease login to continue booking.");
+        const redirectUrl = "car-booking.html" + location.search;
+        window.location.href = "login.html?redirect=" + encodeURIComponent(redirectUrl);
+        return;
+      }
+
+      alert(err.message || 'Booking failed. Please try again.');
+    }
+  });
+
 </script>
 
 </body>
