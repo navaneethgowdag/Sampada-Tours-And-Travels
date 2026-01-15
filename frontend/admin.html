@@ -147,7 +147,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const alertBox = document.getElementById("alertBox");
 
-
   AUTH.updateAuthUI();
 
   try {
@@ -221,17 +220,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     container.innerHTML = html;
   }
 
-    function renderPackageBookings(bookings) {
+  function renderPackageBookings(bookings) {
     const container = document.getElementById("packageContainer");
     if (bookings.length === 0) {
-        container.innerHTML = `<div class="empty-box">No package bookings.</div>`;
-        return;
+      container.innerHTML = `<div class="empty-box">No package bookings.</div>`;
+      return;
     }
 
     let html = `
-        <table class="admin-table">
+      <table class="admin-table">
         <thead>
-            <tr>
+          <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Phone</th>
@@ -240,89 +239,88 @@ document.addEventListener("DOMContentLoaded", async () => {
             <th>Amount</th>
             <th>Status</th>
             <th>Update</th>
-            </tr>
+          </tr>
         </thead>
         <tbody>
     `;
 
     bookings.forEach(b => {
-        html += `
+      html += `
         <tr>
-            <td>#${b.id}</td>
-            <td>${b.user_name || "Guest"}</td>
-            <td>${b.user_phone || "-"}</td>
-            <td>${b.package_name}</td>
-            <td>${formatDate(b.travel_date)}</td>
-            <td>₹${b.total_amount}</td>
-            <td>
+          <td>#${b.id}</td>
+          <td>${b.user_name || "Guest"}</td>
+          <td>${b.user_phone || "-"}</td>
+          <td>${b.package_name}</td>
+          <td>${formatDate(b.travel_date)}</td>
+          <td>₹${b.total_amount}</td>
+          <td>
             <select id="pkg-status-${b.id}">
-                <option value="pending" ${b.status === "pending" ? "selected" : ""}>Pending</option>
-                <option value="confirmed" ${b.status === "confirmed" ? "selected" : ""}>Confirmed</option>
-                <option value="completed" ${b.status === "completed" ? "selected" : ""}>Completed</option>
+              <option value="pending" ${b.status === "pending" ? "selected" : ""}>Pending</option>
+              <option value="confirmed" ${b.status === "confirmed" ? "selected" : ""}>Confirmed</option>
+              <option value="completed" ${b.status === "completed" ? "selected" : ""}>Completed</option>
             </select>
-            </td>
-            <td>
+          </td>
+          <td>
             <button onclick="updatePackageStatus(${b.id})" class="btn-primary">Save</button>
-            </td>
+          </td>
         </tr>
-        `;
+      `;
     });
 
     html += `</tbody></table>`;
     container.innerHTML = html;
-    }
-
-function renderCarBookings(bookings) {
-  const container = document.getElementById("carContainer");
-  if (bookings.length === 0) {
-    container.innerHTML = `<div class="empty-box">No car bookings.</div>`;
-    return;
   }
 
-  let html = `
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Phone</th>
-          <th>Vehicle</th>
-          <th>Date</th>
-          <th>Amount</th>
-          <th>Status</th>
-          <th>Update</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
+  function renderCarBookings(bookings) {
+    const container = document.getElementById("carContainer");
+    if (bookings.length === 0) {
+      container.innerHTML = `<div class="empty-box">No car bookings.</div>`;
+      return;
+    }
 
-  bookings.forEach(b => {
-    html += `
-      <tr>
-        <td>#${b.id}</td>
-        <td>${b.full_name}</td>
-        <td>${b.phone}</td>
-        <td>${b.vehicle_type}</td>
-        <td>${formatDate(b.travel_date)}</td>
-        <td>₹${b.total_amount}</td>
-        <td>
-          <select id="car-status-${b.id}">
-            <option value="pending" ${b.status === "pending" ? "selected" : ""}>Pending</option>
-            <option value="confirmed" ${b.status === "confirmed" ? "selected" : ""}>Confirmed</option>
-            <option value="completed" ${b.status === "completed" ? "selected" : ""}>Completed</option>
-          </select>
-        </td>
-        <td>
-          <button onclick="updateCarStatus(${b.id})" class="btn-primary">Save</button>
-        </td>
-      </tr>
+    let html = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Vehicle</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Update</th>
+          </tr>
+        </thead>
+        <tbody>
     `;
-  });
 
-  html += `</tbody></table>`;
-  container.innerHTML = html;
-}
+    bookings.forEach(b => {
+      html += `
+        <tr>
+          <td>#${b.id}</td>
+          <td>${b.full_name}</td>
+          <td>${b.phone}</td>
+          <td>${b.vehicle_type}</td>
+          <td>${formatDate(b.travel_date)}</td>
+          <td>₹${b.total_amount}</td>
+          <td>
+            <select id="car-status-${b.id}">
+              <option value="pending" ${b.status === "pending" ? "selected" : ""}>Pending</option>
+              <option value="confirmed" ${b.status === "confirmed" ? "selected" : ""}>Confirmed</option>
+              <option value="completed" ${b.status === "completed" ? "selected" : ""}>Completed</option>
+            </select>
+          </td>
+          <td>
+            <button onclick="updateCarStatus(${b.id})" class="btn-primary">Save</button>
+          </td>
+        </tr>
+      `;
+    });
 
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
 
   function renderFeedback(feedback) {
     const container = document.getElementById("feedbackContainer");
@@ -368,55 +366,51 @@ function renderCarBookings(bookings) {
     return d.toLocaleDateString("en-IN");
   }
 
+});
+</script>
+
+<!-- ================= GLOBAL FUNCTIONS (VERY IMPORTANT) ================= -->
+
+<script>
 async function updatePackageStatus(id) {
   const status = document.getElementById(`pkg-status-${id}`).value;
 
   try {
-    const response = await AUTH.apiRequest(`/admin/bookings/package/${id}/status`, {
+    await AUTH.apiRequest(`/admin/bookings/package/${id}/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })
     });
 
-    // ✅ SUCCESS POPUP
     alert("✅ Package booking status updated successfully!");
-    location.reload(); // Refresh to reflect changes
+    location.reload();
 
   } catch (err) {
     console.error("Package update failed:", err);
-
-    // ❌ ERROR POPUP
     alert("❌ Error: " + (err.message || "Failed to update package status"));
   }
 }
-
 
 async function updateCarStatus(id) {
   const status = document.getElementById(`car-status-${id}`).value;
 
   try {
-    const response = await AUTH.apiRequest(`/admin/bookings/car/${id}/status`, {
+    await AUTH.apiRequest(`/admin/bookings/car/${id}/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })
     });
 
-    // ✅ SUCCESS POPUP
     alert("✅ Car booking status updated successfully!");
-    location.reload(); // Refresh to reflect changes
+    location.reload();
 
   } catch (err) {
     console.error("Car update failed:", err);
-
-    // ❌ ERROR POPUP
     alert("❌ Error: " + (err.message || "Failed to update car status"));
   }
 }
-
-
-
-});
 </script>
+
 
 </body>
 </html>
