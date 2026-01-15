@@ -679,6 +679,52 @@ app.get("/admin/users", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
+//================package booking stauts ================
+app.put("/admin/bookings/package/:id/status", authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+
+    if (!["pending", "confirmed", "completed"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    await pool.query(
+      "UPDATE package_bookings SET status = $1 WHERE id = $2",
+      [status, id]
+    );
+
+    res.json({ message: "Package booking status updated successfully" });
+  } catch (err) {
+    console.error("Update package status error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+//===============car booking status ================
+app.put("/admin/bookings/car/:id/status", authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+
+    if (!["pending", "confirmed", "completed"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    await pool.query(
+      "UPDATE car_bookings SET status = $1 WHERE id = $2",
+      [status, id]
+    );
+
+    res.json({ message: "Car booking status updated successfully" });
+  } catch (err) {
+    console.error("Update car status error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
 // ================= ERROR HANDLING =================
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);

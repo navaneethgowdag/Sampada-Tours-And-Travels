@@ -76,8 +76,6 @@
 <header class="main-header">
   <div class="logo"><a href="index.html">Sampada Tours & Travels</a></div>
   <nav class="main-nav">
-    <a href="index.html">Home</a>
-    <a href="my-bookings.html">My Bookings</a>
     <a href="admin.html" class="active">Admin</a>
   </nav>
   <div class="auth-links" id="authLinks"></div>
@@ -223,91 +221,108 @@ document.addEventListener("DOMContentLoaded", async () => {
     container.innerHTML = html;
   }
 
-  function renderPackageBookings(bookings) {
+    function renderPackageBookings(bookings) {
     const container = document.getElementById("packageContainer");
     if (bookings.length === 0) {
-      container.innerHTML = `<div class="empty-box">No package bookings.</div>`;
-      return;
+        container.innerHTML = `<div class="empty-box">No package bookings.</div>`;
+        return;
     }
 
     let html = `
-      <table class="admin-table">
+        <table class="admin-table">
         <thead>
-          <tr>
+            <tr>
             <th>ID</th>
-            <th>User</th>
+            <th>Name</th>
+            <th>Phone</th>
             <th>Package</th>
-            <th>From</th>
-            <th>To</th>
             <th>Date</th>
             <th>Amount</th>
             <th>Status</th>
-          </tr>
+            <th>Update</th>
+            </tr>
         </thead>
         <tbody>
     `;
 
     bookings.forEach(b => {
-      html += `
+        html += `
         <tr>
-          <td>#${b.id}</td>
-          <td>${b.user_name || "Guest"}</td>
-          <td>${b.package_name}</td>
-          <td>${b.from_place || "-"}</td>
-          <td>${b.to_place || "-"}</td>
-          <td>${formatDate(b.travel_date)}</td>
-          <td>₹${b.total_amount}</td>
-          <td><span class="status ${b.status}">${b.status}</span></td>
+            <td>#${b.id}</td>
+            <td>${b.user_name || "Guest"}</td>
+            <td>${b.user_phone || "-"}</td>
+            <td>${b.package_name}</td>
+            <td>${formatDate(b.travel_date)}</td>
+            <td>₹${b.total_amount}</td>
+            <td>
+            <select id="pkg-status-${b.id}">
+                <option value="pending" ${b.status === "pending" ? "selected" : ""}>Pending</option>
+                <option value="confirmed" ${b.status === "confirmed" ? "selected" : ""}>Confirmed</option>
+                <option value="completed" ${b.status === "completed" ? "selected" : ""}>Completed</option>
+            </select>
+            </td>
+            <td>
+            <button onclick="updatePackageStatus(${b.id})" class="btn-primary">Save</button>
+            </td>
         </tr>
-      `;
+        `;
     });
 
     html += `</tbody></table>`;
     container.innerHTML = html;
-  }
-
-  function renderCarBookings(bookings) {
-    const container = document.getElementById("carContainer");
-    if (bookings.length === 0) {
-      container.innerHTML = `<div class="empty-box">No car bookings.</div>`;
-      return;
     }
 
-    let html = `
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>User</th>
-            <th>Vehicle</th>
-            <th>Trip</th>
-            <th>KMs</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-
-    bookings.forEach(b => {
-      html += `
-        <tr>
-          <td>#${b.id}</td>
-          <td>${b.user_name || "Guest"}</td>
-          <td>${b.vehicle_type}</td>
-          <td>${b.trip_type}</td>
-          <td>${b.kms}</td>
-          <td>${formatDate(b.travel_date)}</td>
-          <td>₹${b.total_amount}</td>
-          <td><span class="status ${b.status}">${b.status}</span></td>
-        </tr>
-      `;
-    });
-
-    html += `</tbody></table>`;
-    container.innerHTML = html;
+function renderCarBookings(bookings) {
+  const container = document.getElementById("carContainer");
+  if (bookings.length === 0) {
+    container.innerHTML = `<div class="empty-box">No car bookings.</div>`;
+    return;
   }
+
+  let html = `
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Vehicle</th>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Update</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  bookings.forEach(b => {
+    html += `
+      <tr>
+        <td>#${b.id}</td>
+        <td>${b.full_name}</td>
+        <td>${b.phone}</td>
+        <td>${b.vehicle_type}</td>
+        <td>${formatDate(b.travel_date)}</td>
+        <td>₹${b.total_amount}</td>
+        <td>
+          <select id="car-status-${b.id}">
+            <option value="pending" ${b.status === "pending" ? "selected" : ""}>Pending</option>
+            <option value="confirmed" ${b.status === "confirmed" ? "selected" : ""}>Confirmed</option>
+            <option value="completed" ${b.status === "completed" ? "selected" : ""}>Completed</option>
+          </select>
+        </td>
+        <td>
+          <button onclick="updateCarStatus(${b.id})" class="btn-primary">Save</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
 
   function renderFeedback(feedback) {
     const container = document.getElementById("feedbackContainer");
@@ -352,6 +367,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     const d = new Date(dateStr);
     return d.toLocaleDateString("en-IN");
   }
+
+  async function updatePackageStatus(id) {
+  const status = document.getElementById(`pkg-status-${id}`).value;
+
+  try {
+    await AUTH.apiRequest(`/admin/bookings/package/${id}/status`, {
+      method: "PUT",
+      body: JSON.stringify({ status })
+    });
+
+    alert("Package status updated!");
+  } catch (err) {
+    alert(err.message || "Failed to update package status");
+  }
+}
+
+async function updateCarStatus(id) {
+  const status = document.getElementById(`car-status-${id}`).value;
+
+  try {
+    await AUTH.apiRequest(`/admin/bookings/car/${id}/status`, {
+      method: "PUT",
+      body: JSON.stringify({ status })
+    });
+
+    alert("Car booking status updated!");
+  } catch (err) {
+    alert(err.message || "Failed to update car status");
+  }
+}
+
 
 });
 </script>
