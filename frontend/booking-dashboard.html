@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>My Bookings | Sampada Tours & Travels</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    .dashboard-section { margin: 40px 0; }
+    .booking-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: #fff;
+    }
+    .booking-table th, .booking-table td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .booking-table th {
+      background: #f3f6ff;
+      font-weight: 600;
+    }
+    .status {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status.pending { background: #fff3cd; color: #856404; }
+    .status.confirmed { background: #d1fae5; color: #065f46; }
+    .status.completed { background: #e0e7ff; color: #3730a3; }
+    .empty-box {
+      padding: 20px;
+      text-align: center;
+      background: #f9fafb;
+      border: 1px dashed #ccc;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo"><a href="index.html">Sampada Tours & Travels</a></div>
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="tours.html">Tours</a>
+    <a href="car-rentals.html">Car Rentals</a>
+    <a href="booking-dashboard.html"  >My Bookings</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="auth-links" id="authLinks"></div>
+</header>
+
+<main class="container section">
+  <h1><i class="fas fa-clipboard-list"></i> My Bookings</h1>
+  <p>View and track all your package and car bookings.</p>
+
+  <!-- ALERT -->
+  <div id="alertBox" class="alert-box" style="display:none;"></div>
+
+  <!-- PACKAGE BOOKINGS -->
+  <div class="dashboard-section">
+    <h2><i class="fas fa-suitcase"></i> Package Bookings</h2>
+    <div id="packageContainer"></div>
+  </div>
+
+  <!-- CAR BOOKINGS -->
+  <div class="dashboard-section">
+    <h2><i class="fas fa-car"></i> Car Bookings</h2>
+    <div id="carContainer"></div>
+  </div>
+</main>
+
+<footer class="main-footer">
+  <div class="footer-content">
+    <p>Sampada Tours & Travels</p>
+    <p>© 2025 Sampada Tours & Travels</p>
+  </div>
+</footer>
+
+<script src="auth.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+  // 🔐 AUTH CHECK
+  const user = AUTH.getCurrentUser();
+  if (!user) {
+    alert("Please login to view your bookings.");
+    window.location.href = "login.html?redirect=" + encodeURIComponent("my-bookings.html");
+    return;
+  }
+
+  AUTH.updateAuthUI();
+
+  const packageContainer = document.getElementById("packageContainer");
+  const carContainer = document.getElementById("carContainer");
+  const alertBox = document.getElementById("alertBox");
+
+  try {
+    // 📦 FETCH PACKAGE BOOKINGS
+    const packageData = await AUTH.apiRequest("/bookings/package", { method: "GET" });
+    renderPackageBookings(packageData.bookings || []);
+
+    // 🚗 FETCH CAR BOOKINGS
+    const carData = await AUTH.apiRequest("/bookings/car", { method: "GET" });
+    renderCarBookings(carData.bookings || []);
+
+  } catch (err) {
+    console.error(err);
+    alertBox.textContent = err.message || "Failed to load bookings.";
+    alertBox.className = "alert-box error";
+    alertBox.style.display = "block";
+  }
+
+  // =========================
+  // RENDER FUNCTIONS
+  // =========================
+
+  function renderPackageBookings(bookings) {
+    if (bookings.length === 0) {
+      packageContainer.innerHTML = `<div class="empty-box">No package bookings yet.</div>`;
+      return;
+    }
+
+    let html = `
+      <table class="booking-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Package</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Date</th>
+            <th>Amount (₹)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    bookings.forEach(b => {
+      html += `
+        <tr>
+          <td>#${b.id}</td>
+          <td>${b.package_name}</td>
+          <td>${b.from_place || '-'}</td>
+          <td>${b.to_place || '-'}</td>
+          <td>${formatDate(b.travel_date)}</td>
+          <td>${b.total_amount}</td>
+          <td><span class="status ${b.status}">${b.status}</span></td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    packageContainer.innerHTML = html;
+  }
+
+  function renderCarBookings(bookings) {
+    if (bookings.length === 0) {
+      carContainer.innerHTML = `<div class="empty-box">No car bookings yet.</div>`;
+      return;
+    }
+
+    let html = `
+      <table class="booking-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Vehicle</th>
+            <th>Trip Type</th>
+            <th>KMs</th>
+            <th>Date</th>
+            <th>Amount (₹)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    bookings.forEach(b => {
+      html += `
+        <tr>
+          <td>#${b.id}</td>
+          <td>${b.vehicle_type}</td>
+          <td>${b.trip_type}</td>
+          <td>${b.kms}</td>
+          <td>${formatDate(b.travel_date)}</td>
+          <td>${b.total_amount}</td>
+          <td><span class="status ${b.status}">${b.status}</span></td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    carContainer.innerHTML = html;
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-IN");
+  }
+
+});
+</script>
+
+</body>
+</html>
