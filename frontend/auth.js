@@ -1,9 +1,10 @@
 /* ===========================
    REUSABLE AUTH SCRIPT
-   Include in all pages: <script src="js/auth.js"></script>
+   Include this in all pages: <script src="js/auth.js"></script>
 =========================== */
 
 const API_URL = 'https://sampada-tours-and-travels-ood6.onrender.com';
+
 
 // Update auth UI on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,16 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function updateAuthUI() {
   const token = localStorage.getItem('authToken');
-  const user = JSON.parse(localStorage.getItem('user'));
+  const username = localStorage.getItem('username');
   const authLinks = document.getElementById('authLinks');
-
+  
   if (!authLinks) return;
 
-  if (token && user) {
+  if (token && username) {
     authLinks.innerHTML = `
       <span style="font-weight:600; margin-right:10px;">
-        <i class="fas fa-user-circle"></i> Hi, ${user.name}
-        ${user.is_admin ? '<span style="color:#2563eb;">(Admin)</span>' : ''}
+        <i class="fas fa-user-circle"></i> Hi, ${username}
       </span>
       <button onclick="logout()" class="btn-secondary">
         <i class="fas fa-sign-out-alt"></i> Logout
@@ -37,8 +37,8 @@ function updateAuthUI() {
 
 function logout() {
   localStorage.removeItem('authToken');
-  localStorage.removeItem('user');
-
+  localStorage.removeItem('username');
+  
   showMessage('Logged out successfully', 'success');
   setTimeout(() => location.href = 'index.html', 1000);
 }
@@ -61,36 +61,20 @@ function showMessage(msg, type = 'info') {
   setTimeout(() => div.remove(), 3000);
 }
 
-// Check login status
+// Helper to check if user is logged in
 function isLoggedIn() {
   return !!localStorage.getItem('authToken');
 }
 
-// Get current user
+// Helper to get current user
 function getCurrentUser() {
-  return JSON.parse(localStorage.getItem('user'));
+  return {
+    token: localStorage.getItem('authToken'),
+    username: localStorage.getItem('username')
+  };
 }
 
-// 🔐 Protect admin pages
-function requireAdmin() {
-  const user = getCurrentUser();
-
-  if (!user) {
-    alert("Please login as admin.");
-    window.location.href = "login.html?redirect=admin.html";
-    return false;
-  }
-
-  if (!user.is_admin) {
-    alert("Access denied. Admins only.");
-    window.location.href = "index.html";
-    return false;
-  }
-
-  return true;
-}
-
-// API request helper
+// Helper for authenticated API requests
 async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem('authToken');
 
@@ -113,12 +97,12 @@ async function apiRequest(endpoint, options = {}) {
   return response.json();
 }
 
-// Export globally
+
+// Export for use in other scripts
 window.AUTH = {
   API_URL,
   isLoggedIn,
   getCurrentUser,
-  requireAdmin,
   logout,
   showMessage,
   updateAuthUI,

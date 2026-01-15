@@ -149,19 +149,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const alertBox = document.getElementById("alertBox");
 
-  // 🔐 AUTH CHECK
-  const user = AUTH.getCurrentUser();
-  if (!user) {
-    alert("Please login as admin.");
-    window.location.href = "login.html?redirect=" + encodeURIComponent("admin.html");
-    return;
-  }
-
-  if (!user.is_admin) {
-    alert("Access denied. Admins only.");
-    window.location.href = "index.html";
-    return;
-  }
 
   AUTH.updateAuthUI();
 
