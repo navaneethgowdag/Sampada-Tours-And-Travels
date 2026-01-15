@@ -108,3 +108,24 @@ window.AUTH = {
   updateAuthUI,
   apiRequest
 };
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const revealElements = document.querySelectorAll("[data-reveal]");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+        }
+      });
+    },
+    {
+      threshold: 0.20
+    }
+  );
+
+  revealElements.forEach(el => observer.observe(el));
+});
+
