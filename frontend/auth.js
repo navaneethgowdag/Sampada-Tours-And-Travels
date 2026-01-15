@@ -1,10 +1,9 @@
 /* ===========================
    REUSABLE AUTH SCRIPT
-   Include this in all pages: <script src="js/auth.js"></script>
+   Include in all pages: <script src="js/auth.js"></script>
 =========================== */
 
 const API_URL = 'https://sampada-tours-and-travels-ood6.onrender.com';
-
 
 // Update auth UI on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,15 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function updateAuthUI() {
   const token = localStorage.getItem('authToken');
-  const username = localStorage.getItem('username');
+  const user = JSON.parse(localStorage.getItem('user'));
   const authLinks = document.getElementById('authLinks');
-  
+
   if (!authLinks) return;
 
-  if (token && username) {
+  if (token && user) {
     authLinks.innerHTML = `
       <span style="font-weight:600; margin-right:10px;">
-        <i class="fas fa-user-circle"></i> Hi, ${username}
+        <i class="fas fa-user-circle"></i> Hi, ${user.name}
+        ${user.is_admin ? '<span style="color:#2563eb;">(Admin)</span>' : ''}
       </span>
       <button onclick="logout()" class="btn-secondary">
         <i class="fas fa-sign-out-alt"></i> Logout
@@ -37,8 +37,8 @@ function updateAuthUI() {
 
 function logout() {
   localStorage.removeItem('authToken');
-  localStorage.removeItem('username');
-  
+  localStorage.removeItem('user');
+
   showMessage('Logged out successfully', 'success');
   setTimeout(() => location.href = 'index.html', 1000);
 }
@@ -61,20 +61,36 @@ function showMessage(msg, type = 'info') {
   setTimeout(() => div.remove(), 3000);
 }
 
-// Helper to check if user is logged in
+// Check login status
 function isLoggedIn() {
   return !!localStorage.getItem('authToken');
 }
 
-// Helper to get current user
+// Get current user
 function getCurrentUser() {
-  return {
-    token: localStorage.getItem('authToken'),
-    username: localStorage.getItem('username')
-  };
+  return JSON.parse(localStorage.getItem('user'));
 }
 
-// Helper for authenticated API requests
+// 🔐 Protect admin pages
+function requireAdmin() {
+  const user = getCurrentUser();
+
+  if (!user) {
+    alert("Please login as admin.");
+    window.location.href = "login.html?redirect=admin.html";
+    return false;
+  }
+
+  if (!user.is_admin) {
+    alert("Access denied. Admins only.");
+    window.location.href = "index.html";
+    return false;
+  }
+
+  return true;
+}
+
+// API request helper
 async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem('authToken');
 
@@ -97,12 +113,12 @@ async function apiRequest(endpoint, options = {}) {
   return response.json();
 }
 
-
-// Export for use in other scripts
+// Export globally
 window.AUTH = {
   API_URL,
   isLoggedIn,
   getCurrentUser,
+  requireAdmin,
   logout,
   showMessage,
   updateAuthUI,
