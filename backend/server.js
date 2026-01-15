@@ -153,7 +153,7 @@ async function initializeDatabase() {
         from_place VARCHAR(100),
         to_place VARCHAR(100),
         days INT CHECK (days > 0),
-        kms INT CHECK (kms >= 0),
+        
         total_amount INT NOT NULL CHECK (total_amount >= 0),
         travel_date DATE NOT NULL,
         status VARCHAR(20) DEFAULT 'pending',
@@ -177,7 +177,7 @@ async function initializeDatabase() {
         no_driver BOOLEAN DEFAULT FALSE,
         total_amount FLOAT NOT NULL CHECK (total_amount >= 0),
         travel_date DATE NOT NULL,
-        billable_kms INT CHECK (billable_kms >= 0),
+        
         status VARCHAR(20) DEFAULT 'pending',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
