@@ -325,6 +325,7 @@ p {
 .btn-primary:hover {
   transform: translateY(-3px);
   box-shadow: 0 16px 45px rgba(37,99,235,.4);
+
 }
 
 .btn-primary:active {
@@ -344,6 +345,10 @@ p {
   transform: translateY(-2px);
   border-color: var(--primary);
   box-shadow: 0 8px 20px rgba(37,99,235,.25);
+}
+
+.btn-what:hover{
+  color: #0ea5e9;
 }
 
 .btn-submit {
@@ -466,21 +471,28 @@ p {
   box-shadow: 0 16px 40px rgba(255,255,255,0.25);
 }
 
-/* Hero intro for other pages */
+/* Hero intro for car pages */
 .hero-intro {
-  background: var(--grad-hero);
-  color: #fff;
-  padding: 60px 0;
-  text-align: center;
   position: relative;
+  width: 1920px;
+  height: 400px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0.45)
+    ),
+    url("../images/hero3.jpg") center / cover no-repeat;
   overflow: hidden;
+ 
 }
 
 .hero-intro::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 70%);
 }
 
 .hero-intro h2 {
@@ -490,6 +502,52 @@ p {
 }
 
 .hero-intro p {
+  color: #e0f2fe;
+  font-size: 1.05rem;
+  position: relative;
+}
+
+/* hero intro for tour page*/
+
+.hero-intro1 {
+  background: var(--grad-hero);
+  color: #fff;
+  padding: 60px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+    width: 1920px;
+  height: 400px;
+  background:
+  linear-gradient(
+    rgba(0, 0, 0, 0.45),
+    rgba(0, 0, 0, 0.45)
+  ),
+  url("../images/hero1.jpg") center / cover no-repeat;
+  overflow: hidden; opacity: 80%; 
+ 
+}
+
+.hero-intro1::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+  linear-gradient(
+    rgba(0, 0, 0, 0.45),
+    rgba(0, 0, 0, 0.45)
+  ),
+  url("../images/hero1.jpg") center / cover no-repeat;
+  overflow: hidden; opacity: 80%; 
+}
+
+.hero-intro1 h2 {
+  color: #fff;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.hero-intro1 p {
   color: #e0f2fe;
   font-size: 1.05rem;
   position: relative;
@@ -1076,10 +1134,12 @@ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   }
   
   .auth-container {
-    min-height: 20%;       /* Prevents forcing large height */
-    padding: 20px 16px;     /* Smaller spacing */
-    width: auto;
-    margin-right: 10%;
+    margin: auto;
+    width: 40%;
+    height: 60%;
+    justify-content: center;
+    max-width: 900px;
+
   }
 
   
