@@ -1060,74 +1060,65 @@ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 @media (max-width: 768px) {
-.main-header {
-flex-wrap: wrap;
-padding: 14px clamp(16px, 4vw, 24px);
-}
+  .main-header {
+    /* Keep logo and auth links on the same line to save height */
+    flex-wrap: wrap; 
+    padding: 12px 16px;
+    gap: 10px;
+  }
 
-.main-nav {
-justify-content: center;
-flex-wrap: wrap;
-width: 100%;
-order: 3;
-padding-top: 10px;
-}
+  .logo {
+    flex: 1; /* Pushes auth links to the right */
+  }
 
-.cta-group {
-flex-direction: column;
-align-items: stretch;
-}
+  .logo a {
+    font-size: 1.1rem;
+  }
 
-.hero-text h1 {
-font-size: 2.2rem;
-}
+  .auth-links {
+    order: 2;
+  }
 
-.card-grid {
-grid-template-columns: 1fr;
-gap: 20px;
-}
+  .main-nav {
+    order: 3;
+    width: 100%;
+    display: flex;
+    /* This creates a premium "swipeable" menu instead of a stack */
+    overflow-x: auto; 
+    white-space: nowrap;
+    padding: 8px 0 4px;
+    gap: 4px;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Hides scrollbar on Firefox */
+  }
 
-.section {
-padding: 50px 0;
-}
+  .main-nav::-webkit-scrollbar {
+    display: none; /* Hides scrollbar on Chrome/Safari */
+  }
+
+  .main-nav a {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    flex: 0 0 auto; /* Prevents text from shrinking or wrapping */
+  }
+
+  .main-nav a::after {
+    bottom: 2px; /* Adjust underline for compact view */
+  }
+
+  /* Adjust Hero for smaller header height */
+  .hero-section {
+    min-height: 80vh; 
+  }
 }
 
 @media (max-width: 480px) {
-.section {
-padding: 40px 0;
-}
-
-.btn-primary,
-.btn-secondary,
-.btn-submit {
-width: 100%;
-}
-
-.large-cta {
-padding: 14px 24px;
-font-size: 0.95rem;
-}
-
-.auth-box {
-padding: 28px 22px;
-}
-
-.booking-form,
-.feedback-form {
-padding: 22px 18px;
-}
-
-fieldset {
-padding: 16px;
-}
-
-.hero-section {
-min-height: 85vh;
-}
-
-.hero-text .tagline {
-font-size: 1rem;
-}
+  .auth-links .btn-primary, 
+  .auth-links .btn-secondary {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
 }
 
 /* =========================================================
