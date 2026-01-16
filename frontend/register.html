@@ -65,19 +65,37 @@
         <label for="password">Password</label>
         <div class="input-wrapper password-wrapper">
           <i class="fas fa-key icon"></i>
-          <input type="password" id="password" placeholder="Create a strong password" required>
+          <input type="password" id="password" placeholder="Create a strong password" required minlength="8">
+          <span class="password-toggle" id="togglePassword">
+            <i class="fas fa-eye"></i>
+          </span>
         </div>
         <span id="passwordError" class="error-message"></span>
       </div>
+
+
+      <div class="password-rules">
+        <p id="rule-length"><span>✖</span> 8–20 characters</p>
+        <p id="rule-upper"><span>✖</span> At least one capital letter</p>
+        <p id="rule-number"><span>✖</span> At least one number</p>
+        <p id="rule-special"><span>✖</span> At least one special character (@ # $ % ^ & * !)</p>
+        <p id="rule-space"><span>✖</span> No spaces</p>
+      </div>
+
+
 
       <div class="form-group icon-input">
         <label for="confirmPassword">Confirm Password</label>
         <div class="input-wrapper password-wrapper">
           <i class="fas fa-lock icon"></i>
           <input type="password" id="confirmPassword" placeholder="Re-enter password" required>
+          <span class="password-toggle" id="toggleConfirmPassword">
+            <i class="fas fa-eye"></i>
+          </span>
         </div>
         <span id="confirmPasswordError" class="error-message"></span>
       </div>
+
 
       <button type="submit" class="btn-submit auth-submit-btn" id="submitBtn">
         <i class="fas fa-user-check"></i> Sign Up
@@ -103,98 +121,185 @@
 <!-- Central Auth -->
 <script src="auth.js"></script>
 
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+
   AUTH.updateAuthUI();
-});
 
-/* ===========================
-   HELPERS
-=========================== */
-function showAlert(message, type = 'error') {
-  const alertBox = document.getElementById('alertBox');
-  alertBox.textContent = message;
-  alertBox.className = `alert-box ${type}`;
-  alertBox.style.display = 'block';
-  setTimeout(() => alertBox.style.display = 'none', 5000);
-}
+  const form = document.getElementById("registerForm");
+  const alertBox = document.getElementById("alertBox");
 
-function showFieldError(fieldId, message) {
-  const field = document.getElementById(fieldId);
-  const errorSpan = document.getElementById(`${fieldId}Error`);
-  field.closest('.form-group').classList.add('error');
-  errorSpan.textContent = message;
-  errorSpan.style.display = 'block';
-}
+  const fullName = document.getElementById("fullName");
+  const phone = document.getElementById("phone");
+  const email = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const confirmPasswordInput = document.getElementById("confirmPassword");
 
-function clearFieldError(fieldId) {
-  const field = document.getElementById(fieldId);
-  const errorSpan = document.getElementById(`${fieldId}Error`);
-  field.closest('.form-group').classList.remove('error');
-  errorSpan.textContent = '';
-  errorSpan.style.display = 'none';
-}
+  const togglePassword = document.getElementById("togglePassword");
+  const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
 
-function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.toLowerCase());
-}
+  const ruleLength = document.getElementById("rule-length");
+  const ruleUpper = document.getElementById("rule-upper");
+  const ruleNumber = document.getElementById("rule-number");
+  const ruleSpecial = document.getElementById("rule-special");
+  const ruleSpace = document.getElementById("rule-space");
 
-function validatePhone(phone) {
-  return /^[0-9]{10}$/.test(phone);
-}
-
-/* ===========================
-   REGISTER SUBMIT
-=========================== */
-document.getElementById("registerForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  ['fullName','phone','email','password','confirmPassword'].forEach(clearFieldError);
-  document.getElementById('alertBox').style.display = 'none';
-
-  const name = document.getElementById("fullName").value.trim();
-  const phoneVal = document.getElementById("phone").value.trim();
-  const emailVal = document.getElementById("email").value.trim();
-  const passwordVal = document.getElementById("password").value;
-  const confirmPasswordVal = document.getElementById("confirmPassword").value;
-
-  let valid = true;
-
-  if (!name) { showFieldError('fullName','Name required'); valid=false; }
-  if (!validatePhone(phoneVal)) { showFieldError('phone','Enter valid 10-digit phone'); valid=false; }
-  if (!validateEmail(emailVal)) { showFieldError('email','Enter valid email'); valid=false; }
-  if (passwordVal.length < 8) { showFieldError('password','Minimum 8 characters'); valid=false; }
-  if (passwordVal !== confirmPasswordVal) { showFieldError('confirmPassword','Passwords do not match'); valid=false; }
-
-  if (!valid) {
-    showAlert('Please fix form errors');
-    return;
+  /* ===========================
+     HELPERS
+  =========================== */
+  function showAlert(message, type = 'error') {
+    alertBox.textContent = message;
+    alertBox.className = `alert-box ${type}`;
+    alertBox.style.display = 'block';
+    setTimeout(() => alertBox.style.display = 'none', 5000);
   }
 
-  try {
-    const result = await AUTH.apiRequest('/register', {
-      method: 'POST',
-      body: JSON.stringify({ 
-        name, 
-        phone: phoneVal, 
-        email: emailVal, 
-        password: passwordVal 
-      })
+  function showFieldError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    const errorSpan = document.getElementById(`${fieldId}Error`);
+    field.closest('.form-group').classList.add('error');
+    errorSpan.textContent = message;
+    errorSpan.style.display = 'block';
+  }
+
+  function clearFieldError(fieldId) {
+    const field = document.getElementById(fieldId);
+    const errorSpan = document.getElementById(`${fieldId}Error`);
+    field.closest('.form-group').classList.remove('error');
+    errorSpan.textContent = '';
+    errorSpan.style.display = 'none';
+  }
+
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.toLowerCase());
+  }
+
+  function validatePhone(phone) {
+    return /^[0-9]{10}$/.test(phone);
+  }
+
+  /* ===========================
+     SHOW / HIDE PASSWORDS
+  =========================== */
+  function toggleVisibility(input, toggleEl) {
+    const type = input.type === "password" ? "text" : "password";
+    input.type = type;
+    const icon = toggleEl.querySelector('i');
+    icon.className = type === "password" ? "fas fa-eye" : "fas fa-eye-slash";
+  }
+
+  if (togglePassword) {
+    togglePassword.addEventListener("click", () => {
+      toggleVisibility(passwordInput, togglePassword);
     });
-
-    AUTH.showMessage(result.message || "Account created successfully!", "success");
-    document.getElementById('registerForm').reset();
-
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 1500);
-
-  } catch (err) {
-    console.error(err);
-    AUTH.showMessage(err.message || "Registration failed", "error");
   }
+
+  if (toggleConfirmPassword) {
+    toggleConfirmPassword.addEventListener("click", () => {
+      toggleVisibility(confirmPasswordInput, toggleConfirmPassword);
+    });
+  }
+
+  /* ===========================
+     PASSWORD RULE CHECKER
+  =========================== */
+  function toggleRule(element, isValid) {
+    const icon = element.querySelector("span");
+    if (isValid) {
+      element.classList.add("valid");
+      icon.textContent = "✔";
+    } else {
+      element.classList.remove("valid");
+      icon.textContent = "✖";
+    }
+  }
+
+  passwordInput.addEventListener("input", () => {
+    const value = passwordInput.value;
+
+    toggleRule(ruleLength, value.length >= 8 && value.length <= 20);
+    toggleRule(ruleUpper, /[A-Z]/.test(value));                 // at least one capital
+    toggleRule(ruleNumber, /\d/.test(value));                  // at least one number
+    toggleRule(ruleSpecial, /[@#$%^&*!]/.test(value));         // at least one special
+    toggleRule(ruleSpace, !/\s/.test(value));                  // no spaces
+  });
+
+  function isPasswordValid(password) {
+    return (
+      password.length >= 8 &&
+      password.length <= 20 &&
+      /[A-Z]/.test(password) &&
+      /\d/.test(password) &&
+      /[@#$%^&*!]/.test(password) &&
+      !/\s/.test(password)
+    );
+  }
+
+  /* ===========================
+     REGISTER SUBMIT
+  =========================== */
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    ['fullName','phone','email','password','confirmPassword'].forEach(clearFieldError);
+    alertBox.style.display = 'none';
+
+    const name = fullName.value.trim();
+    const phoneVal = phone.value.trim();
+    const emailVal = email.value.trim();
+    const passwordVal = passwordInput.value;
+    const confirmPasswordVal = confirmPasswordInput.value;
+
+    let valid = true;
+
+    if (!name) { showFieldError('fullName','Name required'); valid=false; }
+    if (!validatePhone(phoneVal)) { showFieldError('phone','Enter valid 10-digit phone'); valid=false; }
+    if (!validateEmail(emailVal)) { showFieldError('email','Enter valid email'); valid=false; }
+
+    if (!isPasswordValid(passwordVal)) {
+      showFieldError('password','Password must be 8–20 chars, include 1 capital, 1 number & 1 special character');
+      valid = false;
+    }
+
+    if (passwordVal !== confirmPasswordVal) {
+      showFieldError('confirmPassword','Passwords do not match');
+      valid = false;
+    }
+
+    if (!valid) {
+      showAlert('Please fix form errors');
+      return;
+    }
+
+    try {
+      const result = await AUTH.apiRequest('/register', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          name, 
+          phone: phoneVal, 
+          email: emailVal, 
+          password: passwordVal 
+        })
+      });
+
+      AUTH.showMessage(result.message || "Account created successfully!", "success");
+      form.reset();
+
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1500);
+
+    } catch (err) {
+      console.error(err);
+      AUTH.showMessage(err.message || "Registration failed", "error");
+    }
+  });
+
 });
 </script>
+
+
 
 </body>
 </html>

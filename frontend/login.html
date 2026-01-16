@@ -8,33 +8,6 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <style>
-    .error-message { color:#dc3545; font-size:0.875rem; margin-top:0.25rem; display:none; }
-    .error-message.show { display:block; }
-    .form-group.error input { border-color:#dc3545; }
-    .btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
-
-    .loading-spinner {
-      display:inline-block; width:14px; height:14px;
-      border:2px solid #fff; border-radius:50%;
-      border-top-color:transparent;
-      animation:spin 0.6s linear infinite;
-      margin-left:8px;
-    }
-    @keyframes spin { to { transform:rotate(360deg); } }
-
-    .password-toggle { cursor:pointer; user-select:none; padding:0 8px; }
-
-    .alert-box {
-      padding:12px 16px;
-      margin-bottom:20px;
-      border-radius:4px;
-      display:none;
-    }
-    .alert-box.show { display:block; }
-    .alert-box.error { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
-    .alert-box.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
-  </style>
 </head>
 <body>
 
@@ -60,7 +33,8 @@
     <h2><i class="fas fa-lock"></i> User Login</h2>
     <p class="auth-message">Access your bookings and saved itineraries.</p>
 
-    <div id="alertBox" class="alert-box" role="alert"></div>
+    <div id="alertBox" class="alert-box" role="alert" style="display: none;"></div>
+
 
     <form id="loginForm" class="auth-form" novalidate>
 
@@ -90,9 +64,11 @@
       </button>
 
       <p class="alt-action">
-        <a href="admin-login.html" style="color: #dc3545;"><pre>Admin-Login                            </pre></a>
+        <a href="admin-login.html" class="auth-link" style="color:#dc3545;">Admin Login</a>
+        &nbsp;|&nbsp;
         <a href="register.html" class="auth-link">Sign Up Here</a>
       </p>
+
 
     </form>
   </div>

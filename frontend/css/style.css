@@ -474,8 +474,7 @@ p {
 /* Hero intro for car pages */
 .hero-intro {
   position: relative;
-  width: 1920px;
-  height: 400px;
+  min-height: 40vh; /* replaces fixed 400px for responsiveness */
   display: grid;
   place-items: center;
   color: #fff;
@@ -486,72 +485,122 @@ p {
     ),
     url("../images/hero3.jpg") center / cover no-repeat;
   overflow: hidden;
- 
 }
 
+/* Subtle light texture layer */
 .hero-intro::before {
   content: '';
   position: absolute;
   inset: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.08) 0%, transparent 50%);
+}
+
+/* Fine grain overlay */
+.hero-intro::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.1)"/></svg>');
+  opacity: 0.15;
+}
+
+/* Content wrapper */
+.hero-intro > * {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  animation: heroFadeIn 1s ease-out;
 }
 
 .hero-intro h2 {
   color: #fff;
   margin-bottom: 12px;
-  position: relative;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .hero-intro p {
   color: #e0f2fe;
   font-size: 1.05rem;
-  position: relative;
+  line-height: 1.6;
+  max-width: 640px;
+  margin-inline: auto;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+/* Reuse same animation */
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 
 /* hero intro for tour page*/
 
 .hero-intro1 {
-  background: var(--grad-hero);
-  color: #fff;
-  padding: 60px 0;
-  text-align: center;
   position: relative;
-  overflow: hidden;
-    width: 1920px;
-  height: 400px;
+  min-height: 40vh; /* responsive instead of fixed height */
+  display: grid;
+  place-items: center;
+  color: #fff;
+  text-align: center;
   background:
-  linear-gradient(
-    rgba(0, 0, 0, 0.45),
-    rgba(0, 0, 0, 0.45)
-  ),
-  url("../images/hero1.jpg") center / cover no-repeat;
-  overflow: hidden; opacity: 80%; 
- 
+    linear-gradient(
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0.45)
+    ),
+    url("../images/hero1.jpg") center / cover no-repeat;
+  overflow: hidden;
 }
 
+/* Light texture overlay */
 .hero-intro1::before {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-  linear-gradient(
-    rgba(0, 0, 0, 0.45),
-    rgba(0, 0, 0, 0.45)
-  ),
-  url("../images/hero1.jpg") center / cover no-repeat;
-  overflow: hidden; opacity: 80%; 
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.08) 0%, transparent 50%);
+}
+
+/* Fine grain layer */
+.hero-intro1::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.1)"/></svg>');
+  opacity: 0.15;
+}
+
+/* Content wrapper */
+.hero-intro1 > * {
+  position: relative;
+  z-index: 1;
+  animation: heroFadeIn 1s ease-out;
 }
 
 .hero-intro1 h2 {
   color: #fff;
   margin-bottom: 12px;
-  position: relative;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .hero-intro1 p {
   color: #e0f2fe;
   font-size: 1.05rem;
-  position: relative;
+  line-height: 1.6;
+  max-width: 640px;
+  margin-inline: auto;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+/* Shared animation */
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 
 /* =========================================================
    6) CARDS & GRID
@@ -913,15 +962,17 @@ input[readonly] {
 
 /* Auth Pages */
 .auth-container {
-  min-height: 92vh;
+  min-height: 100svh; /* mobile-safe viewport height */
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%);
-  padding: 40px 40px;
+  padding: 40px 20px; /* prevents horizontal overflow on mobile */
+  box-sizing: border-box;
 }
 
 .auth-box {
-  width: min(460px, 100%);
+  width: 100%;
+  max-width: 500px; /* replaces min() for better compatibility */
   background: var(--glass-strong);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -929,7 +980,9 @@ input[readonly] {
   padding: 36px;
   text-align: center;
   animation: slideUp 0.6s ease-out;
+  box-sizing: border-box; /* prevents padding from breaking width */
 }
+
 
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
@@ -999,6 +1052,33 @@ input[readonly] {
   margin-top: 5px;
   font-weight: 500;
 }
+
+
+.password-rules {
+  margin-top: 8px;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.password-rules p {
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--error);
+}
+
+.password-rules p.valid {
+  color: var(--success);
+}
+
+.password-rules span {
+  font-weight: 700;
+}
+
+
+
 
 /* =========================================================
    8) TABLES
@@ -1118,80 +1198,114 @@ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 @media (max-width: 768px) {
+
+  /* ================= HEADER ================= */
   .main-header {
-    /* Keep logo and auth links on the same line to save height */
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     padding: 12px 16px;
     gap: 10px;
   }
 
   .logo {
-    flex: 1; /* Pushes auth links to the right */
+    flex: 1;
   }
 
   .logo a {
     font-size: 1.1rem;
   }
-  
-  .auth-container {
-    margin: auto;
-    width: 40%;
-    height: 60%;
-    justify-content: center;
-    max-width: 900px;
-
-  }
-
-  
 
   .auth-links {
     order: 2;
   }
 
+  /* ================= NAV ================= */
   .main-nav {
     order: 3;
     width: 100%;
     display: flex;
-    /* This creates a premium "swipeable" menu instead of a stack */
-    overflow-x: auto; 
+    overflow-x: auto;
     white-space: nowrap;
     padding: 8px 0 4px;
-    gap: 4px;
+    gap: 6px;
     justify-content: flex-start;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Hides scrollbar on Firefox */
+    scrollbar-width: none;
   }
 
   .main-nav::-webkit-scrollbar {
-    display: none; /* Hides scrollbar on Chrome/Safari */
+    display: none;
   }
 
   .main-nav a {
     padding: 6px 12px;
     font-size: 0.85rem;
-    flex: 0 0 auto; /* Prevents text from shrinking or wrapping */
+    flex: 0 0 auto;
   }
 
   .main-nav a::after {
-    bottom: 2px; /* Adjust underline for compact view */
+    bottom: 2px;
   }
 
-  /* Adjust Hero for smaller header height */
-  .hero-section {
-    min-height: 80vh; 
+  /* ================= AUTH CONTAINER ================= */
+  .auth-container {
+    min-height: 100svh;
+    width: 100%;
+    padding: 24px 16px;
+    margin: 0;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
   }
+
+  /* ================= AUTH BOX ================= */
+  .auth-box {
+    width: 100%;
+    max-width: 420px;
+    padding: 28px 20px;
+    box-sizing: border-box;
+  }
+
+  /* ================= HERO ================= */
+  .hero-section {
+    min-height: 80svh;
+  }
+
+  /* ================= FOOTER ================= */
+  footer {
+    padding: 20px 16px;
+    text-align: center;
+  }
+
 }
 
+
 @media (max-width: 480px) {
+
+  .auth-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
   .auth-links .btn-primary, 
   .auth-links .btn-secondary {
     padding: 8px 12px;
     font-size: 0.8rem;
+    line-height: 1.2;
+    white-space: nowrap; /* prevents text from breaking into 2 lines */
   }
+
   .auth-container {
-    padding: 16px 12px;     /* Even tighter for small phones */
+    padding: 16px 12px; /* safe for small phones */
+  }
+
+  .auth-box {
+    padding: 24px 16px; /* prevents inner content overflow */
   }
 }
+
+
 
 /* =========================================================
 11) UTILITIES & ANIMATIONS
