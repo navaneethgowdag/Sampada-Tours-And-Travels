@@ -50,6 +50,28 @@
       </div>
     </fieldset>
 
+    <fieldset id="pickupLocationSection" style="display:none;">
+      <legend>Pickup Location</legend>
+      <div class="form-group">
+        <p style="margin: 0 0 10px 0; color: #333;">
+          <i class="fas fa-map-pin" style="color: #ff6b6b; margin-right: 8px;"></i>
+          <strong>Pickup Point:</strong> Kalaburagi
+          <a href="#" id="pickupMapLink" target="_blank" style="margin-left: 10px; color: #007bff; text-decoration: none;">
+            <i class="fas fa-map-marked-alt"></i> View on Map
+          </a>
+        </p>
+      </div>
+    </fieldset>
+
+    <fieldset id="placesCoveredSection" style="display:none;">
+      <legend>Places Covered in this Package</legend>
+      <div class="form-group">
+        <ul id="placesList" style="list-style: none; padding-left: 0; line-height: 1.8;">
+          <!-- Places will be dynamically inserted here -->
+        </ul>
+      </div>
+    </fieldset>
+
     <fieldset id="customFields" style="display:none;">
       <legend>Custom Tour Details</legend>
       <div class="form-group">
@@ -104,10 +126,31 @@
   </form>
 </main>
 
-<footer class="main-footer">
+<footer class="main-footer" role="contentinfo">
   <div class="footer-content">
     <p>Sampada Tours & Travels</p>
-    <p class="copyright">© 2025 Sampada Tours & Travels</p>
+
+    <p class="address">
+      <a 
+        href="https://www.google.com/maps/search/?api=1&query=Kirana+Bazar+Road,+Mominpura,+Kalaburagi,+Karnataka"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="map-link"
+      >
+        <i class="fas fa-map-marker-alt"></i>
+        Kirana Bazar Road, Mominpura, Kalaburagi, Karnataka
+      </a>
+    </p>
+
+
+    <p>
+      <i class="fas fa-phone"></i> +91 8310634274 |
+      <i class="fas fa-envelope"></i> sampadatours777@gmail.com
+    </p>
+
+    <p class="copyright">
+      © <span id="year"></span> Sampada Tours & Travels
+    </p>
   </div>
 </footer>
 
@@ -116,6 +159,39 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+    // PLACES DATA
+    const packagePlaces = {
+        'Hampi': [
+            'Virupaksha Temple',
+            'Hampi Bazaar',
+            'Lotus Mahal',
+            'Vittala Temple',
+            'Stone Chariot',
+            'Matanga Hill'
+        ],
+        'Bidar': [
+            'Bidar Fort',
+            'Chaubara (Watch Tower)',
+            'Mahmud Gawan Madrasa',
+            'Bahmani Tombs',
+            'Solah Khamba Mosque'
+        ],
+        'Vijayapura': [
+            'Gol Gumbaz',
+            'Ibrahim Rauza',
+            'Malik-e-Maidan (Cannon)',
+            'Jama Masjid',
+            'Bara Kaman'
+        ]
+    };
+
+    // PICKUP LOCATION DATA
+    const pickupMapLinks = {
+        'Hampi': 'https://maps.google.com/?q=Kalaburagi',  // Replace with actual Google Maps link later
+        'Bidar': 'https://maps.google.com/?q=Kalaburagi',  // Replace with actual Google Maps link later
+        'Vijayapura': 'https://maps.google.com/?q=Kalaburagi'  // Replace with actual Google Maps link later
+    };
+
     // 1. 🔐 AUTHENTICATION CHECK
     const user = AUTH.getCurrentUser();
     if (!user) {
@@ -195,6 +271,34 @@ document.addEventListener("DOMContentLoaded", () => {
         priceInput.value = selectedOption.dataset.price || 0;
 
         calculateTotal();
+
+        // Update pickup location section (ONLY for predefined packages, NOT for Custom)
+        const pickupLocationSection = document.getElementById('pickupLocationSection');
+        const pickupMapLink = document.getElementById('pickupMapLink');
+
+        if (tourSelect.value && tourSelect.value !== 'Custom' && pickupMapLinks[tourSelect.value]) {
+            pickupMapLink.href = pickupMapLinks[tourSelect.value];
+            pickupLocationSection.style.display = 'block';
+        } else {
+            pickupLocationSection.style.display = 'none';
+        }
+
+        // Update places covered section
+        const placesCoveredSection = document.getElementById('placesCoveredSection');
+        const placesList = document.getElementById('placesList');
+        
+        if (tourSelect.value && tourSelect.value !== 'Custom' && packagePlaces[tourSelect.value]) {
+            const places = packagePlaces[tourSelect.value];
+            placesList.innerHTML = places.map(place => 
+                `<li><i class="fas fa-map-marker-alt" style="color: #ff6b6b; margin-right: 8px;"></i>${place}</li>`
+            ).join('');
+            placesCoveredSection.style.display = 'block';
+        } else if (tourSelect.value === 'Custom') {
+            placesList.innerHTML = '<li style="color: #666; font-style: italic;"><i class="fas fa-info-circle" style="margin-right: 8px;"></i>Places will be planned as per your request.</li>';
+            placesCoveredSection.style.display = 'block';
+        } else {
+            placesCoveredSection.style.display = 'none';
+        }
     }
 
     // 5. EVENT LISTENERS
